@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+code.js
+code.js.map
+
+# IDE / OS specific
+.DS_Store
+.vscode/
+
+# Node
+*.log
+*.log.*
+
+out/
