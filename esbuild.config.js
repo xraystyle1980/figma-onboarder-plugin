@@ -6,7 +6,7 @@ esbuild.build({
   outfile: 'code.js',
   loader: { '.html': 'text' },
   platform: 'node',
-  target: ['es2020'],
+  target: ['es6'],
   sourcemap: true,
   logLevel: 'info',
   format: 'cjs',

@@ -101,7 +101,9 @@ async function createOnboardingFrame(step: any, index: number, totalSteps: numbe
   
   // Add Step Title to notes
   const stepTitle = figma.createText();
-  stepTitle.fontName = { family: "Poppins", style: "Bold" };
+  const titleFont: FontName = { family: "Inter", style: "Bold" };
+  await figma.loadFontAsync(titleFont); // Ensure font is loaded before use
+  stepTitle.fontName = titleFont;
   stepTitle.characters = `Step ${index + 1} of ${totalSteps}: ${step.stepName}`;
   stepTitle.fontSize = 18;
   notesContainer.appendChild(stepTitle);
@@ -155,14 +157,17 @@ async function findAndPopulateComponent(layoutType: string, step: any): Promise<
     const instance = layoutComponent.createInstance();
     instance.name = step.stepName || step.id || `${layoutType}-instance`;
 
+    // Proactively load all fonts from the main component set
+    const componentSet = layoutComponent.parent && layoutComponent.parent.type === 'COMPONENT_SET' ? layoutComponent.parent : layoutComponent;
+    await loadFontsFromNode(componentSet);
+    console.log(`[Onboarder UX] All fonts for "${componentSet.name}" pre-loaded.`);
+
     // FIRST, set the variant if applicable. This is crucial.
     if (step.modalType) {
       await setVariantProperty(instance, step.modalType);
     }
 
-    // THEN, load fonts and populate content on the (now correct) variant
-    await loadFontsFromNode(instance);
-
+    // THEN, populate content on the (now correct) variant
     // Recursively find and update all instances within this new instance
     await findAndPopulateAllInstances(instance, step);
 
@@ -177,8 +182,8 @@ async function findAndPopulateComponent(layoutType: string, step: any): Promise<
     errorFrame.resize(1440, 900);
     
     const errorText = figma.createText();
-    await figma.loadFontAsync({ family: "Poppins", style: "Regular" });
-    errorText.fontName = { family: "Poppins", style: "Regular" };
+    await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+    errorText.fontName = { family: "Inter", style: "Regular" };
     errorText.characters = errorMessage + `\n\nAlternatively, ensure a component named one of the following exists:\n[${possibleNames.join(', ')}]`;
     errorText.fontSize = 24;
     errorText.textAlignHorizontal = "CENTER";
@@ -222,8 +227,8 @@ async function setVariantProperty(instance: InstanceNode, variantValue: string) 
 // Helper for creating annotation text blocks
 async function createAnnotationText(label: string, value: string): Promise<TextNode> {
   const textNode = figma.createText();
-  const boldFont: FontName = { family: "Poppins", style: "Bold" };
-  const regularFont: FontName = { family: "Poppins", style: "Regular" };
+  const boldFont: FontName = { family: "Inter", style: "Bold" };
+  const regularFont: FontName = { family: "Inter", style: "Regular" };
 
   await figma.loadFontAsync(boldFont);
   await figma.loadFontAsync(regularFont);
