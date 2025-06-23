@@ -12,7 +12,21 @@ figma.showUI(__html__, { width: 400, height: 400 });
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'generate-screens') {
     try {
-      const steps = JSON.parse(msg.json);
+      const jsonData = JSON.parse(msg.json);
+      let steps;
+
+      // Handle cases where the JSON is an array of objects or a single object
+      if (Array.isArray(jsonData) && jsonData.length > 0 && jsonData[0].steps) {
+        steps = jsonData[0].steps; // Case: [ { "steps": [...] } ]
+      } else if (jsonData.steps) {
+        steps = jsonData.steps; // Case: { "steps": [...] }
+      }
+
+      if (!Array.isArray(steps)) {
+        figma.notify('Error: The provided JSON does not contain a "steps" array.', { error: true });
+        return;
+      }
+
       const createdFrames: SceneNode[] = [];
       const totalSteps = steps.length;
 
@@ -46,11 +60,6 @@ figma.ui.onmessage = async (msg) => {
 
 // Helper function to create an onboarding frame from a component
 async function createOnboardingFrame(step: any, index: number, totalSteps: number): Promise<SceneNode> {
-  // Load all fonts you will use
-  await figma.loadFontAsync({ family: "Inter", style: "Bold" });
-  await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-  await figma.loadFontAsync({ family: "Inter", style: "Medium" });
-
   // Load all pages to ensure components are accessible
   await figma.loadAllPagesAsync();
 
@@ -92,7 +101,7 @@ async function createOnboardingFrame(step: any, index: number, totalSteps: numbe
   
   // Add Step Title to notes
   const stepTitle = figma.createText();
-  stepTitle.fontName = { family: "Inter", style: "Bold" };
+  stepTitle.fontName = { family: "Poppins", style: "Bold" };
   stepTitle.characters = `Step ${index + 1} of ${totalSteps}: ${step.stepName}`;
   stepTitle.fontSize = 18;
   notesContainer.appendChild(stepTitle);
@@ -124,7 +133,7 @@ async function findAndPopulateComponent(layoutType: string, step: any): Promise<
   // Map layout types to component names
   const componentNameMap: { [key: string]: string[] } = {
     'full_screen': ['full-screen-layout', 'fullscreen-layout', 'full_screen_layout'],
-    'modal_form': ['modal-layout', 'modal-form-layout'],
+    'modal_form': ['modal-layout', 'modal-form-layout', 'onboarding-modal'],
     'tooltip_overlay': ['tooltip-layout', 'tooltip-overlay-layout'],
     'split_screen': ['split-screen-layout', 'split-layout'],
     'swipeable_cards': ['swipeable-cards-layout', 'cards-layout']
@@ -146,22 +155,31 @@ async function findAndPopulateComponent(layoutType: string, step: any): Promise<
     const instance = layoutComponent.createInstance();
     instance.name = step.stepName || step.id || `${layoutType}-instance`;
 
+    // FIRST, set the variant if applicable. This is crucial.
+    if (step.modalType) {
+      await setVariantProperty(instance, step.modalType);
+    }
+
+    // THEN, load fonts and populate content on the (now correct) variant
+    await loadFontsFromNode(instance);
+
     // Recursively find and update all instances within this new instance
     await findAndPopulateAllInstances(instance, step);
 
     return instance; // Return the instance itself
   } else {
     // Fallback: Component not found, create a placeholder frame with an error message
-    figma.notify(`Component for layout type "${layoutType}" not found.`, { error: true });
+    const errorMessage = `Layout component for "${layoutType}" not found. Please make sure you're running this in the official template file.`;
+    figma.notify(errorMessage, { error: true });
     
     const errorFrame = figma.createFrame();
     errorFrame.name = `Error: Component Not Found`;
     errorFrame.resize(1440, 900);
     
     const errorText = figma.createText();
-    await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-    errorText.fontName = { family: "Inter", style: "Regular" };
-    errorText.characters = `Component for "${layoutType}" not found.\n\nPlease create a component named one of:\n[${possibleNames.join(', ')}]`;
+    await figma.loadFontAsync({ family: "Poppins", style: "Regular" });
+    errorText.fontName = { family: "Poppins", style: "Regular" };
+    errorText.characters = errorMessage + `\n\nAlternatively, ensure a component named one of the following exists:\n[${possibleNames.join(', ')}]`;
     errorText.fontSize = 24;
     errorText.textAlignHorizontal = "CENTER";
     errorText.textAlignVertical = "CENTER";
@@ -173,11 +191,39 @@ async function findAndPopulateComponent(layoutType: string, step: any): Promise<
   }
 }
 
+// New helper function to set the variant on an instance
+async function setVariantProperty(instance: InstanceNode, variantValue: string) {
+    const mainComponent = await instance.getMainComponentAsync();
+    if (!mainComponent) return;
+
+    const definitionSource = mainComponent.parent && mainComponent.parent.type === 'COMPONENT_SET' ? mainComponent.parent : mainComponent;
+    const propertyDefs = definitionSource.componentPropertyDefinitions;
+
+    if (!propertyDefs) return;
+
+    // Find a variant property whose options include the desired value.
+    // This is more robust than hardcoding a property name like 'type'.
+    for (const componentPropName in propertyDefs) {
+        const propDef = propertyDefs[componentPropName];
+        if (propDef.type === 'VARIANT' && propDef.variantOptions && propDef.variantOptions.includes(variantValue)) {
+            try {
+                instance.setProperties({ [componentPropName]: variantValue });
+                console.log(`[Onboarder UX] Set variant to "${variantValue}" on component "${definitionSource.name}".`);
+                // We assume the first matching variant property is the correct one.
+                return; 
+            } catch (e) {
+                console.error(`[Onboarder UX] Failed to set variant property.`, e);
+            }
+        }
+    }
+    console.warn(`[Onboarder UX] Could not find a variant property on "${definitionSource.name}" that accepts the value "${variantValue}".`);
+}
+
 // Helper for creating annotation text blocks
 async function createAnnotationText(label: string, value: string): Promise<TextNode> {
   const textNode = figma.createText();
-  const boldFont: FontName = { family: "Inter", style: "Bold" };
-  const regularFont: FontName = { family: "Inter", style: "Regular" };
+  const boldFont: FontName = { family: "Poppins", style: "Bold" };
+  const regularFont: FontName = { family: "Poppins", style: "Regular" };
 
   await figma.loadFontAsync(boldFont);
   await figma.loadFontAsync(regularFont);
@@ -196,6 +242,28 @@ async function createAnnotationText(label: string, value: string): Promise<TextN
   textNode.fontSize = 14;
   textNode.layoutAlign = "STRETCH";
   return textNode;
+}
+
+// Recursively load all fonts from a node and its children
+async function loadFontsFromNode(node: SceneNode) {
+  const fontsToLoad: FontName[] = [];
+  const findFonts = (node: SceneNode) => {
+    if (node.type === 'TEXT' && node.fontName !== figma.mixed) {
+      const font = node.fontName as FontName;
+      if (!fontsToLoad.some(f => f.family === font.family && f.style === font.style)) {
+        fontsToLoad.push(font);
+      }
+    }
+    if ("children" in node) {
+      for (const child of node.children) {
+        findFonts(child as SceneNode);
+      }
+    }
+  };
+  findFonts(node);
+  if (fontsToLoad.length > 0) {
+    await Promise.all(fontsToLoad.map(figma.loadFontAsync));
+  }
 }
 
 // New recursive function to find and populate all nested instances
@@ -217,67 +285,54 @@ async function findAndPopulateAllInstances(node: SceneNode, step: any) {
 async function updateInstanceProperties(instance: InstanceNode, step: any) {
   const mainComponent = await instance.getMainComponentAsync();
   if (!mainComponent) {
-    console.log('[Onboarder UX] Could not get main component for instance.');
     return;
   }
-
-  // Log the step data for debugging
-  console.log('[Onboarder UX] Step object received for property update:', JSON.stringify(step));
 
   // If the main component is a variant, get definitions from the parent set.
   const definitionSource = mainComponent.parent && mainComponent.parent.type === 'COMPONENT_SET' ? mainComponent.parent : mainComponent;
   const propertyDefs = definitionSource.componentPropertyDefinitions;
 
   if (!propertyDefs || Object.keys(propertyDefs).length === 0) {
-    console.log(`[Onboarder UX] No component properties found on component "${definitionSource.name}".`);
     return;
   }
   
-  console.log(`[Onboarder UX] Found ${Object.keys(propertyDefs).length} component properties on component "${definitionSource.name}". Definitions:`, JSON.stringify(propertyDefs));
-
-  // Map JSON properties to keywords that might appear in Figma component property names
-  const propertyMap: { [key: string]: string[] } = {
-    'headline': ['headline', 'title'],
-    'subtitle': ['subtitle', 'subtext', 'description', 'body'],
-    'marketingCopy': ['marketing', 'copy', 'marketingcopy'],
-    'cta': ['cta', 'button', 'get started', 'next', 'skip', 'cancel', 'submit'],
-    'stepName': ['step']
+  // 1. Define the exact mapping from JSON keys to Figma Property names (case-insensitive)
+  const jsonToFigmaPropMap: { [key: string]: string } = {
+    'headline': 'headline',
+    'subtext': 'subtitle',
+    'marketingCopy': 'marketingcopy',
+    'cta': 'cta'
   };
-  
+
   const propertiesToSet: { [key: string]: string } = {};
 
-  // Iterate over the defined component properties
-  for (const componentPropName in propertyDefs) {
-    const propDef = propertyDefs[componentPropName];
-    
-    // We only care about text properties
-    if (propDef.type === 'TEXT') {
-      const componentPropNameLower = componentPropName.toLowerCase();
-
-      // Find a matching property in our JSON data
-      for (const jsonProp in propertyMap) {
-        const keywords = propertyMap[jsonProp];
-        if (keywords.some(k => componentPropNameLower.includes(k))) {
-          const valueToSet = step[jsonProp as keyof typeof step];
-          if (valueToSet) {
-            console.log(`[Onboarder UX] Match found! Staging component property "${componentPropName}" with value from JSON property "${jsonProp}".`);
-            propertiesToSet[componentPropName] = String(valueToSet);
-            // Break from the inner loop to prevent one component property from being updated by multiple JSON properties
-            break;
-          }
+  // 2. Loop through the JSON keys we want to map
+  for (const jsonKey in jsonToFigmaPropMap) {
+    const valueToSet = step[jsonKey];
+    console.log(`[DEBUG] Checking for JSON key: "${jsonKey}"...`);
+    if (valueToSet) {
+      const figmaPropName = jsonToFigmaPropMap[jsonKey];
+      console.log(`[DEBUG] ... found value. Mapping to Figma prop: "${figmaPropName}"`);
+      
+      // 3. Find the full Figma property name (including the unique ID)
+      for (const componentPropName in propertyDefs) {
+        if (componentPropName.toLowerCase().startsWith(figmaPropName + '#') || componentPropName.toLowerCase() === figmaPropName) {
+           propertiesToSet[componentPropName] = String(valueToSet);
+           break; // Found the matching Figma prop, move to the next JSON key
         }
       }
     }
   }
-  
+
   if (Object.keys(propertiesToSet).length > 0) {
     try {
+      console.log(`[Onboarder UX] Setting properties for component "${definitionSource.name}":`, propertiesToSet);
       instance.setProperties(propertiesToSet);
-      console.log(`[Onboarder UX] Successfully set ${Object.keys(propertiesToSet).length} properties.`);
+      console.log(`[Onboarder UX] Successfully set ${Object.keys(propertiesToSet).length} properties on component "${definitionSource.name}".`);
     } catch (e) {
-      console.error(`[Onboarder UX] Failed to set component properties.`, e);
+      console.error(`[Onboarder UX] Failed to set component properties. This can happen if the component's fonts are not available. Error:`, e);
     }
   } else {
-      console.log(`[Onboarder UX] No component properties were updated for component "${definitionSource.name}". Check component property names and JSON keys.`);
+      console.log(`[Onboarder UX] No matching properties found to set for component "${definitionSource.name}".`);
   }
 }
