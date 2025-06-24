@@ -132,66 +132,75 @@ async function createOnboardingFrame(step: any, index: number, totalSteps: numbe
 }
 
 async function findAndPopulateComponent(layoutType: string, step: any): Promise<SceneNode> {
-  // Map layout types to component names
-  const componentNameMap: { [key: string]: string[] } = {
-    'full_screen': ['full-screen-layout', 'fullscreen-layout', 'full_screen_layout'],
-    'modal_form': ['modal-layout', 'modal-form-layout', 'onboarding-modal'],
-    'tooltip_overlay': ['tooltip-layout', 'tooltip-overlay-layout'],
-    'split_screen': ['split-screen-layout', 'split-layout'],
-    'swipeable_cards': ['swipeable-cards-layout', 'cards-layout']
-  };
-
-  const possibleNames = componentNameMap[layoutType] || [layoutType];
-  let layoutComponent: ComponentNode | null = null;
-
-  // Search for the component across the entire document
-  for (const name of possibleNames) {
-    layoutComponent = figma.root.findOne(
-      node => node.type === "COMPONENT" && node.name === name
-    ) as ComponentNode | null;
-    if (layoutComponent) break;
+  // If the step has input fields, use the modal-layout-form component
+  let componentName = '';
+  if (Array.isArray(step.inputFields) && step.inputFields.length > 0) {
+    componentName = 'modal-layout-form';
+  } else {
+    // Fallback to your existing logic for other layout types
+    const componentNameMap: { [key: string]: string[] } = {
+      'full_screen': ['full-screen-layout', 'fullscreen-layout', 'full_screen_layout'],
+      'modal_form': ['modal-layout', 'modal-form-layout', 'onboarding-modal'],
+      'tooltip_overlay': ['tooltip-layout', 'tooltip-overlay-layout'],
+      'split_screen': ['split-screen-layout', 'split-layout'],
+      // swipeable_cards removed
+    };
+    const possibleNames = componentNameMap[layoutType] || [layoutType];
+    // Try each possible name until found
+    for (const name of possibleNames) {
+      const found = figma.root.findOne(
+        node => node.type === "COMPONENT" && node.name === name
+      ) as ComponentNode | null;
+      if (found) {
+        componentName = name;
+        break;
+      }
+    }
+    // If none found, fallback to the first possible name
+    if (!componentName) {
+      componentName = possibleNames[0];
+    }
   }
+
+  // Now find the component by name
+  const layoutComponent = figma.root.findOne(
+    node => node.type === "COMPONENT" && node.name === componentName
+  ) as ComponentNode | null;
 
   if (layoutComponent) {
     // Create an instance of the component
     const instance = layoutComponent.createInstance();
     instance.name = step.stepName || step.id || `${layoutType}-instance`;
-
     // Proactively load all fonts from the main component set
     const componentSet = layoutComponent.parent && layoutComponent.parent.type === 'COMPONENT_SET' ? layoutComponent.parent : layoutComponent;
     await loadFontsFromNode(componentSet);
-    console.log(`[Onboarder UX] All fonts for "${componentSet.name}" pre-loaded.`);
-
     // FIRST, set the variant if applicable. This is crucial.
     if (step.modalType) {
       await setVariantProperty(instance, step.modalType);
     }
-
     // THEN, populate content on the (now correct) variant
     // Recursively find and update all instances within this new instance
     await findAndPopulateAllInstances(instance, step);
-
+    // Hide dropdown-group if not needed
+    await hideUnusedSelectDropdowns(instance, step);
     return instance; // Return the instance itself
   } else {
     // Fallback: Component not found, create a placeholder frame with an error message
-    const errorMessage = `Layout component for "${layoutType}" not found. Please make sure you're running this in the official template file.`;
+    const errorMessage = `Layout component for "${componentName}" not found. Please make sure you're running this in the official template file.`;
     figma.notify(errorMessage, { error: true });
-    
     const errorFrame = figma.createFrame();
     errorFrame.name = `Error: Component Not Found`;
     errorFrame.resize(1440, 900);
-    
     const errorText = figma.createText();
     await figma.loadFontAsync({ family: "Inter", style: "Regular" });
     errorText.fontName = { family: "Inter", style: "Regular" };
-    errorText.characters = errorMessage + `\n\nAlternatively, ensure a component named one of the following exists:\n[${possibleNames.join(', ')}]`;
+    errorText.characters = errorMessage + `\n\nAlternatively, ensure a component named one of the following exists:\n[${componentName}]`;
     errorText.fontSize = 24;
     errorText.textAlignHorizontal = "CENTER";
     errorText.textAlignVertical = "CENTER";
     errorText.fills = [{ type: 'SOLID', color: { r: 1, g: 0, b: 0 } }];
     errorText.resize(1440, 900);
     errorFrame.appendChild(errorText);
-
     return errorFrame;
   }
 }
@@ -304,7 +313,7 @@ async function updateInstanceProperties(instance: InstanceNode, step: any) {
   // 1. Define the exact mapping from JSON keys to Figma Property names (case-insensitive)
   const jsonToFigmaPropMap: { [key: string]: string } = {
     'headline': 'headline',
-    'subtext': 'subtitle',
+    'subtitle': 'subtitle',
     'marketingCopy': 'marketingcopy',
     'cta': 'cta'
   };
@@ -318,15 +327,51 @@ async function updateInstanceProperties(instance: InstanceNode, step: any) {
     if (valueToSet) {
       const figmaPropName = jsonToFigmaPropMap[jsonKey];
       console.log(`[DEBUG] ... found value. Mapping to Figma prop: "${figmaPropName}"`);
-      
+      let found = false;
       // 3. Find the full Figma property name (including the unique ID)
       for (const componentPropName in propertyDefs) {
         if (componentPropName.toLowerCase().startsWith(figmaPropName + '#') || componentPropName.toLowerCase() === figmaPropName) {
            propertiesToSet[componentPropName] = String(valueToSet);
+           found = true;
            break; // Found the matching Figma prop, move to the next JSON key
         }
       }
+      if (!found && jsonKey === 'subtitle') {
+        console.warn(`[DEBUG] Subtitle value found in JSON, but no matching Figma property for 'subtitle'. PropertyDefs:`, propertyDefs);
+      }
     }
+  }
+
+  // 3. Map inputFields to inputLabel-N, inputPlaceholder-N, selectLabel-N, selectPlaceholder-N
+  if (Array.isArray(step.inputFields)) {
+    step.inputFields.forEach((field: any, idx: number) => {
+      // For text/textarea/email/number fields
+      if (["text", "textarea", "email", "number"].includes(field.type)) {
+        const labelProp = `inputLabel-${idx + 1}`;
+        const placeholderProp = `inputPlaceholder-${idx + 1}`;
+        for (const componentPropName in propertyDefs) {
+          if (componentPropName.toLowerCase().startsWith(labelProp.toLowerCase() + '#') || componentPropName.toLowerCase() === labelProp.toLowerCase()) {
+            propertiesToSet[componentPropName] = field.label;
+          }
+          if (field.placeholder && (componentPropName.toLowerCase().startsWith(placeholderProp.toLowerCase() + '#') || componentPropName.toLowerCase() === placeholderProp.toLowerCase())) {
+            propertiesToSet[componentPropName] = field.placeholder;
+          }
+        }
+      }
+      // For select/multiselect fields
+      if (["select", "multiselect"].includes(field.type)) {
+        const labelProp = `selectLabel-${idx + 1}`;
+        const placeholderProp = `selectPlaceholder-${idx + 1}`;
+        for (const componentPropName in propertyDefs) {
+          if (componentPropName.toLowerCase().startsWith(labelProp.toLowerCase() + '#') || componentPropName.toLowerCase() === labelProp.toLowerCase()) {
+            propertiesToSet[componentPropName] = field.label;
+          }
+          if (field.placeholder && (componentPropName.toLowerCase().startsWith(placeholderProp.toLowerCase() + '#') || componentPropName.toLowerCase() === placeholderProp.toLowerCase())) {
+            propertiesToSet[componentPropName] = field.placeholder;
+          }
+        }
+      }
+    });
   }
 
   if (Object.keys(propertiesToSet).length > 0) {
@@ -339,5 +384,18 @@ async function updateInstanceProperties(instance: InstanceNode, step: any) {
     }
   } else {
       console.log(`[Onboarder UX] No matching properties found to set for component "${definitionSource.name}".`);
+  }
+}
+
+// Helper to hide dropdown-group if no select/multiselect fields are present
+async function hideUnusedSelectDropdowns(instance: InstanceNode, step: any) {
+  const hasSelect = Array.isArray(step.inputFields) && step.inputFields.some(
+    (field: any) => field.type === 'select' || field.type === 'multiselect'
+  );
+  if (!hasSelect) {
+    const dropdownNode = instance.findOne(node => node.name === 'dropdown-group');
+    if (dropdownNode) {
+      dropdownNode.visible = false;
+    }
   }
 }
