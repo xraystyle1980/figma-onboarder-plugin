@@ -1,0 +1,324 @@
+{
+  "productInfo": {
+    "productName": "FreelancePM",
+    "targetAudience": "independent contractors and solo professionals aged 25-50",
+    "productType": "SaaS",
+    "coreUserGoal": "To create a project, invite clients, and track tasks",
+    "onboardingGoal": {
+      "education": "Teach users how to use the app effectively",
+      "featureSetup": "Guide users through setting up their first project",
+      "activation": "Encourage users to start their first task and invite a client"
+    },
+    "keyFeatures": [
+      "Project creation and management",
+      "Client invitation and collaboration",
+      "Task tracking and deadlines",
+      "Time tracking",
+      "Invoice generation"
+    ],
+    "launchContext": {
+      "timing": "after signup",
+      "signupStrategy": "early",
+      "frictionReduction": "Provide a simple, guided setup with optional detailed settings for advanced users",
+      "valueReinforcement": "Show a quick win by demonstrating how easy it is to create a project and invite a client"
+    },
+    "flowType": "wizard"
+  },
+  "pattern": {
+    "pattern": "Setup Wizard",
+    "rationale": "The Setup Wizard is ideal for FreelancePM as it provides a structured and guided approach for users to create their first project, invite clients, and track tasks. Given the target audience of independent contractors and solo professionals, a straightforward onboarding process that minimizes friction and quickly demonstrates value is essential. The wizard can lead users step-by-step through the core functionalities, ensuring they understand how to effectively use the app while also encouraging them to start their first task and invite a client.",
+    "citation": "NNGroup"
+  },
+  "steps": [
+    {
+      "stepName": "Welcome to FreelancePM",
+      "uxGoal": "Introduce users to the application and set expectations for onboarding",
+      "userAction": "Click 'Get Started' to proceed",
+      "uxPattern": "Setup Wizard",
+      "patternPurpose": "The welcome step sets the stage for the onboarding process, making users feel comfortable and informed.",
+      "layoutType": "full_screen",
+      "layoutPurpose": "A full-screen layout captures the user's attention and provides a clear starting point for the onboarding journey.",
+      "rationale": "This step is crucial for creating a positive first impression and reducing any initial anxiety about using the app.",
+      "headline": "Unlock Your Project Management Potential",
+      "subtitle": "Get ready to streamline your freelance work!",
+      "marketingCopy": "FreelancePM is your all-in-one solution for managing projects, collaborating with clients, and tracking tasks effortlessly. Experience the ease of project creation, time tracking, and invoicing — all designed to elevate your freelance business.",
+      "cta": "Get Started",
+      "ctaType": "next page",
+      "featureCallouts": {
+        "features": [
+          {
+            "title": "Project creation and management",
+            "description": "Easily create and manage your projects in one place, so you can focus on delivering exceptional results."
+          },
+          {
+            "title": "Client invitation and collaboration",
+            "description": "Invite clients to collaborate seamlessly, ensuring everyone stays aligned and engaged throughout the project."
+          },
+          {
+            "title": "Task tracking and deadlines",
+            "description": "Stay organized and meet deadlines effortlessly with our intuitive task tracking that keeps you on top of your workload."
+          },
+          {
+            "title": "Time tracking",
+            "description": "Accurately track your time spent on tasks to maximize productivity and ensure you get paid for every minute of your work."
+          },
+          {
+            "title": "Invoice generation",
+            "description": "Generate professional invoices in seconds, making it easy to get paid promptly for your hard work."
+          }
+        ]
+      },
+      "id": "step-1"
+    },
+    {
+      "stepName": "Set Up Your First Project",
+      "uxGoal": "Guide users through the process of creating their first project",
+      "userAction": "Fill in project details and click 'Next'",
+      "uxPattern": "Setup Wizard",
+      "patternPurpose": "This step uses a setup wizard to simplify the project creation process, making it straightforward and intuitive.",
+      "layoutType": "modal_form",
+      "layoutPurpose": "The modal form layout focuses the user on providing the necessary information without distractions.",
+      "modalType": "form",
+      "inputFields": [
+        {
+          "label": "Project Name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter your project name"
+        },
+        {
+          "label": "Project Description",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Describe your project"
+        },
+        {
+          "label": "Deadline",
+          "type": "date",
+          "required": true
+        }
+      ],
+      "rationale": "This step is essential for getting users actively engaged with the product by creating a tangible outcome right away.",
+      "headline": "Create Your First Project",
+      "subtitle": "It's time to bring your ideas to life!",
+      "marketingCopy": "Setting up your first project is quick and easy with FreelancePM. Simply enter your project details, and watch as your vision transforms into actionable steps. Start managing your workload effectively right from the get-go!",
+      "cta": "Next",
+      "ctaType": "next page",
+      "featureCallouts": {
+        "features": [
+          {
+            "title": "Project creation and management",
+            "description": "Easily create and manage your projects in one place, so you can focus on delivering exceptional results."
+          },
+          {
+            "title": "Client invitation and collaboration",
+            "description": "Invite clients to collaborate seamlessly, ensuring everyone stays aligned and engaged throughout the project."
+          },
+          {
+            "title": "Task tracking and deadlines",
+            "description": "Stay organized and meet deadlines effortlessly with our intuitive task tracking that keeps you on top of your workload."
+          },
+          {
+            "title": "Time tracking",
+            "description": "Accurately track your time spent on tasks to maximize productivity and ensure you get paid for every minute of your work."
+          },
+          {
+            "title": "Invoice generation",
+            "description": "Generate professional invoices in seconds, making it easy to get paid promptly for your hard work."
+          }
+        ]
+      },
+      "id": "step-2"
+    },
+    {
+      "stepName": "Invite Your Clients",
+      "uxGoal": "Encourage users to invite clients to collaborate on their project",
+      "userAction": "Enter client email addresses and click 'Send Invites'",
+      "uxPattern": "Setup Wizard",
+      "patternPurpose": "This step continues the setup process by emphasizing collaboration, which is a key feature of the product.",
+      "layoutType": "modal_form",
+      "layoutPurpose": "The modal form keeps the focus on inviting clients, ensuring users don't get overwhelmed with other options.",
+      "modalType": "form",
+      "inputFields": [
+        {
+          "label": "Client Email Addresses",
+          "type": "email",
+          "required": true,
+          "placeholder": "Enter client emails separated by commas"
+        }
+      ],
+      "rationale": "Inviting clients is a critical part of the user's journey, promoting engagement and collaboration right from the start.",
+      "headline": "Invite Your Clients to Collaborate",
+      "subtitle": "Enhance your project with teamwork!",
+      "marketingCopy": "Collaboration is key to project success! Invite your clients to join you on FreelancePM, allowing for seamless communication and feedback. Get everyone on the same page, and watch your project thrive together.",
+      "cta": "Send Invites",
+      "ctaType": "submit",
+      "featureCallouts": {
+        "features": [
+          {
+            "title": "Project creation and management",
+            "description": "Easily create and manage your projects in one place, so you can focus on delivering exceptional results."
+          },
+          {
+            "title": "Client invitation and collaboration",
+            "description": "Invite clients to collaborate seamlessly, ensuring everyone stays aligned and engaged throughout the project."
+          },
+          {
+            "title": "Task tracking and deadlines",
+            "description": "Stay organized and meet deadlines effortlessly with our intuitive task tracking that keeps you on top of your workload."
+          },
+          {
+            "title": "Time tracking",
+            "description": "Accurately track your time spent on tasks to maximize productivity and ensure you get paid for every minute of your work."
+          },
+          {
+            "title": "Invoice generation",
+            "description": "Generate professional invoices in seconds, making it easy to get paid promptly for your hard work."
+          }
+        ]
+      },
+      "id": "step-3"
+    },
+    {
+      "stepName": "Start Tracking Tasks",
+      "uxGoal": "Prompt users to create their first task to get started with project management",
+      "userAction": "Create a task and click 'Add Task'",
+      "uxPattern": "Setup Wizard",
+      "patternPurpose": "This step guides users to take immediate action, reinforcing the app's utility in managing tasks.",
+      "layoutType": "modal_form",
+      "layoutPurpose": "The modal form allows users to focus on task creation without distractions from other app features.",
+      "modalType": "form",
+      "inputFields": [
+        {
+          "label": "Task Name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter task name"
+        },
+        {
+          "label": "Due Date",
+          "type": "date",
+          "required": false
+        },
+        {
+          "label": "Task Description",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Describe the task"
+        }
+      ],
+      "rationale": "Starting to track tasks provides users with a quick win, showing them the app's value and functionality.",
+      "headline": "Track Your Tasks Effortlessly",
+      "subtitle": "Stay organized and on top of deadlines!",
+      "marketingCopy": "Creating tasks in FreelancePM helps you manage your project efficiently. Define your tasks, set due dates, and keep your workload organized. Achieve your goals with clarity and confidence at every step!",
+      "cta": "Add Task",
+      "ctaType": "submit",
+      "featureCallouts": {
+        "features": [
+          {
+            "title": "Project creation and management",
+            "description": "Easily create and manage your projects in one place, so you can focus on delivering exceptional results."
+          },
+          {
+            "title": "Client invitation and collaboration",
+            "description": "Invite clients to collaborate seamlessly, ensuring everyone stays aligned and engaged throughout the project."
+          },
+          {
+            "title": "Task tracking and deadlines",
+            "description": "Stay organized and meet deadlines effortlessly with our intuitive task tracking that keeps you on top of your workload."
+          },
+          {
+            "title": "Time tracking",
+            "description": "Accurately track your time spent on tasks to maximize productivity and ensure you get paid for every minute of your work."
+          },
+          {
+            "title": "Invoice generation",
+            "description": "Generate professional invoices in seconds, making it easy to get paid promptly for your hard work."
+          }
+        ]
+      },
+      "id": "step-4"
+    },
+    {
+      "stepName": "Onboarding Complete!",
+      "uxGoal": "Celebrate the user's progress and encourage further exploration of the app",
+      "userAction": "Click 'Finish' to complete onboarding",
+      "uxPattern": "Setup Wizard",
+      "patternPurpose": "This final step reinforces the user's achievements and encourages them to continue using the app.",
+      "layoutType": "full_screen",
+      "layoutPurpose": "A full-screen layout allows for a celebratory message and a clear call to action for further exploration.",
+      "rationale": "This step is vital for boosting user confidence and ensuring they feel accomplished after completing the onboarding process.",
+      "flowEnd": true,
+      "headline": "You're All Set!",
+      "subtitle": "Celebrate your new setup!",
+      "marketingCopy": "Congratulations on completing your onboarding! You’re now equipped to manage your projects, collaborate with clients, and track your progress like a pro. Dive in and explore all the features FreelancePM has to offer!",
+      "cta": "Finish",
+      "ctaType": "dismiss",
+      "featureCallouts": {
+        "features": [
+          {
+            "title": "Project creation and management",
+            "description": "Easily create and manage your projects in one place, so you can focus on delivering exceptional results."
+          },
+          {
+            "title": "Client invitation and collaboration",
+            "description": "Invite clients to collaborate seamlessly, ensuring everyone stays aligned and engaged throughout the project."
+          },
+          {
+            "title": "Task tracking and deadlines",
+            "description": "Stay organized and meet deadlines effortlessly with our intuitive task tracking that keeps you on top of your workload."
+          },
+          {
+            "title": "Time tracking",
+            "description": "Accurately track your time spent on tasks to maximize productivity and ensure you get paid for every minute of your work."
+          },
+          {
+            "title": "Invoice generation",
+            "description": "Generate professional invoices in seconds, making it easy to get paid promptly for your hard work."
+          }
+        ]
+      },
+      "id": "step-5"
+    }
+  ],
+  "featureCallouts": {
+    "features": [
+      {
+        "title": "Project creation and management",
+        "description": "Easily create and manage your projects in one place, so you can focus on delivering exceptional results."
+      },
+      {
+        "title": "Client invitation and collaboration",
+        "description": "Invite clients to collaborate seamlessly, ensuring everyone stays aligned and engaged throughout the project."
+      },
+      {
+        "title": "Task tracking and deadlines",
+        "description": "Stay organized and meet deadlines effortlessly with our intuitive task tracking that keeps you on top of your workload."
+      },
+      {
+        "title": "Time tracking",
+        "description": "Accurately track your time spent on tasks to maximize productivity and ensure you get paid for every minute of your work."
+      },
+      {
+        "title": "Invoice generation",
+        "description": "Generate professional invoices in seconds, making it easy to get paid promptly for your hard work."
+      }
+    ]
+  },
+  "integrationOverview": {
+    "narrative": "Onboarding for FreelancePM should feel intuitive and empowering, guiding users through a seamless journey that minimizes friction and maximizes engagement. By employing a Setup Wizard, we can create a structured flow that leads users step-by-step through the essential tasks of creating a project, inviting clients, and tracking tasks. This approach aligns perfectly with our target audience of independent contractors and solo professionals, who benefit from a straightforward onboarding experience that quickly demonstrates the app's value. The wizard will not only educate users on how to use the app effectively but also provide a quick win by showcasing the ease of project creation and client collaboration.\n\nThe onboarding experience will appear immediately after signup, capitalizing on the launch context to engage users while their interest is high. By implementing an early signup strategy, we set the stage for users to delve into the core functionalities without delay. The friction-reduction strategy will include a simple, guided setup process, with optional detailed settings for those who desire a more customized experience. This ensures that users can achieve their primary goal—activating their first task and inviting a client—without feeling overwhelmed. Ultimately, this chosen pattern not only enhances user satisfaction but also fosters long-term engagement by reinforcing the value of FreelancePM from the very beginning.",
+    "implementationNotes": "Ensure proper user guidance and feedback throughout the flow."
+  },
+  "copy": {
+    "tone": "Empathetic and encouraging",
+    "voice": "Clear, concise, and action-oriented",
+    "keyPhrases": [
+      "Create your first project in minutes!",
+      "Invite clients and collaborate effortlessly.",
+      "Track tasks and meet your deadlines.",
+      "Time tracking made simple.",
+      "Generate invoices with just a click."
+    ]
+  },
+  "generatedAt": "2025-06-24T12:18:39.572Z"
+}

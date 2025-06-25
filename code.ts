@@ -183,6 +183,7 @@ async function findAndPopulateComponent(layoutType: string, step: any): Promise<
     await findAndPopulateAllInstances(instance, step);
     // Hide dropdown-group if not needed
     await hideUnusedSelectDropdowns(instance, step);
+    await populateDynamicForm(instance, step);
     return instance; // Return the instance itself
   } else {
     // Fallback: Component not found, create a placeholder frame with an error message
@@ -398,4 +399,55 @@ async function hideUnusedSelectDropdowns(instance: InstanceNode, step: any) {
       dropdownNode.visible = false;
     }
   }
+}
+
+// Helper to dynamically populate and duplicate form fields
+async function populateDynamicForm(instance: InstanceNode, step: any) {
+  if (!Array.isArray(step.inputFields)) return;
+
+  // Find the form-fields-container inside the instance
+  const formFieldsContainer = instance.findOne(
+    (node: SceneNode) => node.name === 'form-fields-container'
+  ) as FrameNode | null;
+  if (!formFieldsContainer) return;
+
+  // Find all pre-created input, textarea, and dropdown groups
+  const inputGroups = formFieldsContainer.findAll(node => !!node.name && node.name.startsWith('input-group')) as FrameNode[];
+  const textAreaGroups = formFieldsContainer.findAll(node => !!node.name && node.name.startsWith('textArea-group')) as FrameNode[];
+  const dropdownGroups = formFieldsContainer.findAll(node => !!node.name && node.name.startsWith('dropdown-group')) as FrameNode[];
+
+  // Track how many of each type we've used
+  let inputIdx = 0, textAreaIdx = 0, dropdownIdx = 0;
+
+  for (const field of step.inputFields) {
+    if (["text", "email", "number"].includes(field.type) && inputIdx < inputGroups.length) {
+      const group = inputGroups[inputIdx++];
+      group.visible = true;
+      const labelNode = group.findOne((n: SceneNode) => n.name === 'inputLabel');
+      if (labelNode && 'characters' in labelNode) labelNode.characters = field.label;
+      const placeholderNode = group.findOne((n: SceneNode) => n.name === 'inputPlaceholder');
+      if (placeholderNode && 'characters' in placeholderNode) placeholderNode.characters = field.placeholder || '';
+    }
+    if (field.type === 'textarea' && textAreaIdx < textAreaGroups.length) {
+      const group = textAreaGroups[textAreaIdx++];
+      group.visible = true;
+      const labelNode = group.findOne((n: SceneNode) => n.name === 'textAreaLabel');
+      if (labelNode && 'characters' in labelNode) labelNode.characters = field.label;
+      const placeholderNode = group.findOne((n: SceneNode) => n.name === 'textAreaPlaceholder');
+      if (placeholderNode && 'characters' in placeholderNode) placeholderNode.characters = field.placeholder || '';
+    }
+    if (["select", "multiselect"].includes(field.type) && dropdownIdx < dropdownGroups.length) {
+      const group = dropdownGroups[dropdownIdx++];
+      group.visible = true;
+      const labelNode = group.findOne((n: SceneNode) => n.name === 'selectLabel');
+      if (labelNode && 'characters' in labelNode) labelNode.characters = field.label;
+      const placeholderNode = group.findOne((n: SceneNode) => n.name === 'selectPlaceholder');
+      if (placeholderNode && 'characters' in placeholderNode) placeholderNode.characters = field.placeholder || '';
+    }
+  }
+
+  // Hide unused groups
+  for (; inputIdx < inputGroups.length; inputIdx++) inputGroups[inputIdx].visible = false;
+  for (; textAreaIdx < textAreaGroups.length; textAreaIdx++) textAreaGroups[textAreaIdx].visible = false;
+  for (; dropdownIdx < dropdownGroups.length; dropdownIdx++) dropdownGroups[dropdownIdx].visible = false;
 }
