@@ -5,6 +5,16 @@ import __html__ from "./ui.html";
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 
+// Library keys for published onboarding components
+const LIBRARY_KEYS = {
+  'full-screen-layout': '1612-2103',
+  'modal-layout-form': '1667-23421', 
+  'modal-layout': '1612-2656',
+  'tooltip-layout': '1612-3898',
+  'split-screen-layout': '1612-4016',
+  // Add more component keys as needed
+};
+
 // Show the UI
 figma.showUI(__html__, { width: 400, height: 400 });
 
@@ -131,78 +141,120 @@ async function createOnboardingFrame(step: any, index: number, totalSteps: numbe
   return containerFrame;
 }
 
+// --- BASIC SCAFFOLDING FOR MAIN COMPONENTS ---
+
+async function createFullScreenLayout(step: any): Promise<FrameNode> {
+  const frame = figma.createFrame();
+  frame.name = step.stepName || 'Full Screen Layout';
+  frame.resize(800, 600);
+  frame.fills = [{ type: 'SOLID', color: { r: 0.95, g: 0.95, b: 1 } }];
+  await figma.loadFontAsync({ family: 'Inter', style: 'Bold' });
+  const text = figma.createText();
+  text.fontName = { family: 'Inter', style: 'Bold' };
+  text.characters = 'Full Screen Layout';
+  text.fontSize = 32;
+  text.x = 40;
+  text.y = 40;
+  frame.appendChild(text);
+  return frame;
+}
+
+async function createModalLayoutForm(step: any): Promise<FrameNode> {
+  const frame = figma.createFrame();
+  frame.name = step.stepName || 'Modal Layout Form';
+  frame.resize(400, 500);
+  frame.fills = [{ type: 'SOLID', color: { r: 1, g: 0.98, b: 0.95 } }];
+  await figma.loadFontAsync({ family: 'Inter', style: 'Bold' });
+  const text = figma.createText();
+  text.fontName = { family: 'Inter', style: 'Bold' };
+  text.characters = 'Modal Layout Form';
+  text.fontSize = 24;
+  text.x = 30;
+  text.y = 30;
+  frame.appendChild(text);
+  return frame;
+}
+
+async function createModalLayout(step: any): Promise<FrameNode> {
+  const frame = figma.createFrame();
+  frame.name = step.stepName || 'Modal Layout';
+  frame.resize(400, 400);
+  frame.fills = [{ type: 'SOLID', color: { r: 0.95, g: 1, b: 0.95 } }];
+  await figma.loadFontAsync({ family: 'Inter', style: 'Bold' });
+  const text = figma.createText();
+  text.fontName = { family: 'Inter', style: 'Bold' };
+  text.characters = 'Modal Layout';
+  text.fontSize = 24;
+  text.x = 30;
+  text.y = 30;
+  frame.appendChild(text);
+  return frame;
+}
+
+async function createTooltipLayout(step: any): Promise<FrameNode> {
+  const frame = figma.createFrame();
+  frame.name = step.stepName || 'Tooltip Layout';
+  frame.resize(300, 120);
+  frame.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 0.9 } }];
+  await figma.loadFontAsync({ family: 'Inter', style: 'Bold' });
+  const text = figma.createText();
+  text.fontName = { family: 'Inter', style: 'Bold' };
+  text.characters = 'Tooltip Layout';
+  text.fontSize = 18;
+  text.x = 20;
+  text.y = 20;
+  frame.appendChild(text);
+  return frame;
+}
+
+async function createSplitScreenLayout(step: any): Promise<FrameNode> {
+  const frame = figma.createFrame();
+  frame.name = step.stepName || 'Split Screen Layout';
+  frame.resize(900, 600);
+  frame.fills = [{ type: 'SOLID', color: { r: 0.9, g: 0.95, b: 1 } }];
+  await figma.loadFontAsync({ family: 'Inter', style: 'Bold' });
+  const text = figma.createText();
+  text.fontName = { family: 'Inter', style: 'Bold' };
+  text.characters = 'Split Screen Layout';
+  text.fontSize = 32;
+  text.x = 40;
+  text.y = 40;
+  frame.appendChild(text);
+  return frame;
+}
+
+// --- UPDATE FINDANDPOPULATECOMPONENT TO USE SCAFFOLDS ---
+
 async function findAndPopulateComponent(layoutType: string, step: any): Promise<SceneNode> {
-  // If the step has input fields, use the modal-layout-form component
-  let componentName = '';
+  // Map layoutType to scaffolded function
   if (Array.isArray(step.inputFields) && step.inputFields.length > 0) {
-    componentName = 'modal-layout-form';
-  } else {
-    // Fallback to your existing logic for other layout types
-    const componentNameMap: { [key: string]: string[] } = {
-      'full_screen': ['full-screen-layout', 'fullscreen-layout', 'full_screen_layout'],
-      'modal_form': ['modal-layout', 'modal-form-layout', 'onboarding-modal'],
-      'tooltip_overlay': ['tooltip-layout', 'tooltip-overlay-layout'],
-      'split_screen': ['split-screen-layout', 'split-layout'],
-      // swipeable_cards removed
-    };
-    const possibleNames = componentNameMap[layoutType] || [layoutType];
-    // Try each possible name until found
-    for (const name of possibleNames) {
-      const found = figma.root.findOne(
-        node => node.type === "COMPONENT" && node.name === name
-      ) as ComponentNode | null;
-      if (found) {
-        componentName = name;
-        break;
-      }
-    }
-    // If none found, fallback to the first possible name
-    if (!componentName) {
-      componentName = possibleNames[0];
-    }
+    return await createModalLayoutForm(step);
   }
-
-  // Now find the component by name
-  const layoutComponent = figma.root.findOne(
-    node => node.type === "COMPONENT" && node.name === componentName
-  ) as ComponentNode | null;
-
-  if (layoutComponent) {
-    // Create an instance of the component
-    const instance = layoutComponent.createInstance();
-    instance.name = step.stepName || step.id || `${layoutType}-instance`;
-    // Proactively load all fonts from the main component set
-    const componentSet = layoutComponent.parent && layoutComponent.parent.type === 'COMPONENT_SET' ? layoutComponent.parent : layoutComponent;
-    await loadFontsFromNode(componentSet);
-    // FIRST, set the variant if applicable. This is crucial.
-    if (step.modalType) {
-      await setVariantProperty(instance, step.modalType);
-    }
-    // THEN, populate content on the (now correct) variant
-    // Recursively find and update all instances within this new instance
-    await findAndPopulateAllInstances(instance, step);
-    // Hide dropdown-group if not needed
-    await hideUnusedSelectDropdowns(instance, step);
-    await populateDynamicForm(instance, step);
-    return instance; // Return the instance itself
-  } else {
-    // Fallback: Component not found, create a placeholder frame with an error message
-    const errorMessage = `Layout component for "${componentName}" not found. Please make sure you're running this in the official template file.`;
-    figma.notify(errorMessage, { error: true });
-    const errorFrame = figma.createFrame();
-    errorFrame.name = `Error: Component Not Found`;
-    errorFrame.resize(1440, 900);
-    const errorText = figma.createText();
-    await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-    errorText.fontName = { family: "Inter", style: "Regular" };
-    errorText.characters = errorMessage + `\n\nAlternatively, ensure a component named one of the following exists:\n[${componentName}]`;
-    errorText.fontSize = 24;
-    errorText.textAlignHorizontal = "CENTER";
-    errorText.textAlignVertical = "CENTER";
-    errorText.fills = [{ type: 'SOLID', color: { r: 1, g: 0, b: 0 } }];
-    errorText.resize(1440, 900);
-    errorFrame.appendChild(errorText);
-    return errorFrame;
+  switch (layoutType) {
+    case 'full_screen':
+      return await createFullScreenLayout(step);
+    case 'modal_form':
+      return await createModalLayoutForm(step);
+    case 'modal':
+      return await createModalLayout(step);
+    case 'tooltip_overlay':
+      return await createTooltipLayout(step);
+    case 'split_screen':
+      return await createSplitScreenLayout(step);
+    default:
+      // fallback: create a generic frame
+      const frame = figma.createFrame();
+      frame.name = step.stepName || 'Generic Layout';
+      frame.resize(600, 400);
+      frame.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+      const text = figma.createText();
+      await figma.loadFontAsync({ family: 'Inter', style: 'Bold' });
+      text.characters = 'Generic Layout';
+      text.fontSize = 20;
+      text.x = 20;
+      text.y = 20;
+      frame.appendChild(text);
+      return frame;
   }
 }
 

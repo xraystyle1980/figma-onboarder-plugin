@@ -1,40 +1,93 @@
-Below are the steps to get your plugin running. You can also find instructions at:
+# Onboarder.design Figma Plugin
 
-  https://www.figma.com/plugin-docs/plugin-quickstart-guide/
+This plugin generates onboarding UX flows from JSON data by importing components from a published Figma library.
 
-This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
+## Quick Start
 
-First, download Node.js which comes with NPM. This will allow you to install TypeScript and other
-libraries. You can find the download link here:
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-  https://nodejs.org/en/download/
+2. **Build the plugin**:
+   ```bash
+   npm run build
+   ```
 
-Next, install TypeScript using the command:
+3. **Load in Figma**:
+   - Open Figma
+   - Go to Plugins > Development > Import plugin from manifest
+   - Select the `manifest.json` file in this directory
 
-  npm install -g typescript
+## Library Setup
 
-Finally, in the directory of your plugin, get the latest type definitions for the plugin API by running:
+This plugin requires a published Figma library with onboarding components. See [LIBRARY_MIGRATION.md](./LIBRARY_MIGRATION.md) for detailed setup instructions.
 
-  npm install --save-dev @figma/plugin-typings
+### Required Components
 
-If you are familiar with JavaScript, TypeScript will look very familiar. In fact, valid JavaScript code
-is already valid Typescript code.
+The plugin expects these components in your published library:
+- `full-screen-layout`
+- `modal-layout-form`
+- `modal-layout`
+- `tooltip-layout`
+- `split-screen-layout`
 
-TypeScript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
+### Update Library Keys
 
-For more information, visit https://www.typescriptlang.org/
+After publishing your library, update the `LIBRARY_KEYS` object in `code.ts` with your component keys:
 
-Using TypeScript requires a compiler to convert TypeScript (code.ts) into JavaScript (code.js)
-for the browser to run.
+```typescript
+const LIBRARY_KEYS = {
+  'full-screen-layout': 'YOUR_ACTUAL_KEY_HERE',
+  'modal-layout-form': 'YOUR_ACTUAL_KEY_HERE',
+  // ... etc
+};
+```
 
-We recommend writing TypeScript code using Visual Studio code:
+Use the helper script to extract keys:
+```bash
+node extract-component-keys.js "https://www.figma.com/file/..."
+```
 
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Open this directory in Visual Studio Code.
-3. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "npm: watch". You will have to do this again every time
-    you reopen Visual Studio Code.
+## Development
 
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+### TypeScript Setup
+
+This plugin uses TypeScript. Install globally:
+```bash
+npm install -g typescript
+```
+
+Install plugin typings:
+```bash
+npm install --save-dev @figma/plugin-typings
+```
+
+### Building
+
+- **Watch mode**: `npm run watch` (regenerates on save)
+- **Build once**: `npm run build`
+
+### VS Code Setup
+
+1. Open this directory in VS Code
+2. Run "Terminal > Run Build Task..." > "npm: watch"
+3. The JavaScript file will regenerate automatically on save
+
+## Usage
+
+1. Run the plugin in any Figma file
+2. Paste your onboarding flow JSON
+3. Click "Generate Screens"
+4. Components will be imported from your published library
+
+## Architecture
+
+- **Library-first**: Components imported from published library
+- **Fallback support**: Can use local components if library unavailable
+- **Variant support**: Handles component variants and properties
+- **Dynamic content**: Populates text, images, and form fields
+
+## Troubleshooting
+
+See [LIBRARY_MIGRATION.md](./LIBRARY_MIGRATION.md) for common issues and solutions.
