@@ -4,10 +4,12 @@
   "description": "Your Figma Plugin",
   "main": "code.js",
   "scripts": {
-    "build": "esbuild code.ts --bundle --outfile=dist/code.js --loader:.html=text --target=es2020",
+    "build": "esbuild src/main.ts --bundle --outfile=dist/code.js --loader:.html=text --target=es2020",
+    "build:legacy": "esbuild code.ts --bundle --outfile=dist/code.js --loader:.html=text --target=es2020",
     "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
     "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
     "watch": "npm run build -- --watch",
+    "watch:legacy": "npm run build:legacy -- --watch",
     "build:plugin": "esbuild figma/Onboarder\\ UX/code.ts --bundle --outfile=figma/Onboarder\\ UX/dist/code.js",
     "watch:plugin": "npm run build:plugin -- --watch"
   },

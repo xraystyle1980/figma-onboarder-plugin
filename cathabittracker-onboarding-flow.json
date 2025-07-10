@@ -1,0 +1,277 @@
+{
+  "productInfo": {
+    "productName": "CatHabitTracker",
+    "targetAudience": "Cat owners",
+    "productType": "mobile app",
+    "coreUserGoal": "Track and analyze their cat's daily habits",
+    "onboardingGoal": {
+      "education": "Teach users how to input and monitor their cat's habits",
+      "featureSetup": "Assist users in setting up their cat's profile and habit tracking",
+      "activation": "Encourage users to start tracking habits from the first session"
+    },
+    "keyFeatures": [
+      "Habit logging",
+      "Habit pattern analysis",
+      "Lizard catching frequency tracking",
+      "Sleep schedule monitoring",
+      "Customizable habit alerts"
+    ],
+    "launchContext": {
+      "timing": "after signup",
+      "signupStrategy": "early",
+      "frictionReduction": "Use a simple, intuitive interface with guided input fields",
+      "valueReinforcement": "Provide immediate habit insights after the first habit is logged"
+    },
+    "flowType": "wizard"
+  },
+  "pattern": {
+    "pattern": "Setup Wizard",
+    "rationale": "The Setup Wizard is the best fit for CatHabitTracker because it allows users to complete a sequence of actions necessary for setting up their cat's profile and habit tracking. Given that the target audience consists of cat owners who may not be familiar with tracking their pets' habits, a structured onboarding process will guide them through the initial setup, ensuring they input essential information and understand how to use the app effectively. This pattern aligns with the onboarding goals of educating users, assisting in feature setup, and encouraging immediate activation by prompting them to log their cat's habits right from the first session. The other patterns are less suitable; a Feature Discovery Tour would not provide the necessary step-by-step guidance for initial setup, and Progressive Personalization is not ideal as the primary goal is to establish a habit tracking framework rather than adapting to user preferences over time.",
+    "citation": "NNGroup"
+  },
+  "steps": [
+    {
+      "stepName": "Welcome to CatHabitTracker",
+      "uxGoal": "Introduce users to the app and its purpose",
+      "userAction": "Read the welcome message and continue to the next step",
+      "uxPattern": "Setup Wizard",
+      "patternPurpose": "This pattern is appropriate for welcoming users and setting the stage for the onboarding process.",
+      "layoutType": "modal_form",
+      "layoutPurpose": "The modal form captures attention and provides a focused introduction without distractions.",
+      "modalType": "welcome",
+      "inputFields": [],
+      "rationale": "This step creates a positive first impression and helps users feel comfortable starting their journey.",
+      "flowEnd": false,
+      "headline": "Welcome to Your Cat's New Home!",
+      "subtitle": "Get ready to track your cat's habits like never before.",
+      "marketingCopy": "CatHabitTracker helps you understand your feline friend better by logging their habits and routines. From tracking lizard catching to monitoring sleep schedules, we make it easy to ensure your cat thrives. Let’s embark on this journey to a happier, healthier cat together!",
+      "cta": "Get Started",
+      "ctaType": "next page",
+      "featureCallouts": {
+        "features": [
+          {
+            "title": "Habit logging",
+            "description": "Easily track your cat's daily habits to ensure they're healthy and happy."
+          },
+          {
+            "title": "Habit pattern analysis",
+            "description": "Discover trends in your cat's behavior to better understand their needs and preferences."
+          },
+          {
+            "title": "Lizard catching frequency tracking",
+            "description": "Monitor your feline's hunting instincts and keep tabs on their playful escapades."
+          },
+          {
+            "title": "Sleep schedule monitoring",
+            "description": "Keep an eye on your cat's sleep patterns to ensure they're getting the rest they need."
+          },
+          {
+            "title": "Customizable habit alerts",
+            "description": "Set personalized reminders to help you stay on top of your cat's routines effortlessly."
+          }
+        ]
+      },
+      "id": "step-1"
+    },
+    {
+      "stepName": "Set Up Your Cat's Profile",
+      "uxGoal": "Assist users in creating a profile for their cat",
+      "userAction": "Input cat's name and age to continue",
+      "uxPattern": "Setup Wizard",
+      "patternPurpose": "This pattern facilitates the setup process by guiding users through necessary inputs.",
+      "layoutType": "modal_form",
+      "layoutPurpose": "The modal form allows users to focus on entering their cat's details without distractions.",
+      "modalType": "form",
+      "inputFields": [
+        {
+          "label": "Cat's Name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter your cat's name"
+        },
+        {
+          "label": "Cat's Age",
+          "type": "number",
+          "required": true,
+          "placeholder": "Enter your cat's age in years"
+        }
+      ],
+      "rationale": "Setting up the cat's profile is crucial for personalized tracking, enhancing user engagement.",
+      "flowEnd": false,
+      "headline": "Create Your Cat's Profile",
+      "subtitle": "Let’s personalize your tracking experience.",
+      "marketingCopy": "By setting up your cat's profile, you enable tailored habit tracking that suits their unique personality and needs. Knowing their name and age helps CatHabitTracker provide insights that matter to you. It’s the first step towards understanding your furry companion better!",
+      "cta": "Continue",
+      "ctaType": "next page",
+      "featureCallouts": {
+        "features": [
+          {
+            "title": "Habit logging",
+            "description": "Easily track your cat's daily habits to ensure they're healthy and happy."
+          },
+          {
+            "title": "Habit pattern analysis",
+            "description": "Discover trends in your cat's behavior to better understand their needs and preferences."
+          },
+          {
+            "title": "Lizard catching frequency tracking",
+            "description": "Monitor your feline's hunting instincts and keep tabs on their playful escapades."
+          },
+          {
+            "title": "Sleep schedule monitoring",
+            "description": "Keep an eye on your cat's sleep patterns to ensure they're getting the rest they need."
+          },
+          {
+            "title": "Customizable habit alerts",
+            "description": "Set personalized reminders to help you stay on top of your cat's routines effortlessly."
+          }
+        ]
+      },
+      "id": "step-2"
+    },
+    {
+      "stepName": "Habit Tracking Features Overview",
+      "uxGoal": "Educate users on the key features of habit tracking",
+      "userAction": "Explore the features and continue to the next step",
+      "uxPattern": "Setup Wizard",
+      "patternPurpose": "This pattern is suitable for providing an overview of features, ensuring users understand the app's capabilities.",
+      "layoutType": "modal_form",
+      "layoutPurpose": "The modal form provides a clear and concise summary of features, allowing users to absorb information easily.",
+      "modalType": "summary",
+      "inputFields": [],
+      "rationale": "Educating users on features reinforces the app's value and encourages them to utilize the functionalities effectively.",
+      "flowEnd": false,
+      "headline": "Discover Tracking Features",
+      "subtitle": "Learn how to make the most of CatHabitTracker.",
+      "marketingCopy": "With CatHabitTracker, you can log your cat's habits effortlessly and analyze patterns over time. Our features include lizard catching frequency tracking, sleep schedule monitoring, and customizable alerts to keep you informed. Dive into a world where every detail of your cat's life is recorded and understood!",
+      "cta": "Explore Features",
+      "ctaType": "next page",
+      "featureCallouts": {
+        "features": [
+          {
+            "title": "Habit logging",
+            "description": "Easily track your cat's daily habits to ensure they're healthy and happy."
+          },
+          {
+            "title": "Habit pattern analysis",
+            "description": "Discover trends in your cat's behavior to better understand their needs and preferences."
+          },
+          {
+            "title": "Lizard catching frequency tracking",
+            "description": "Monitor your feline's hunting instincts and keep tabs on their playful escapades."
+          },
+          {
+            "title": "Sleep schedule monitoring",
+            "description": "Keep an eye on your cat's sleep patterns to ensure they're getting the rest they need."
+          },
+          {
+            "title": "Customizable habit alerts",
+            "description": "Set personalized reminders to help you stay on top of your cat's routines effortlessly."
+          }
+        ]
+      },
+      "id": "step-3"
+    },
+    {
+      "stepName": "Log Your First Habit",
+      "uxGoal": "Encourage users to start tracking their cat's habits immediately",
+      "userAction": "Log a habit by selecting from options",
+      "uxPattern": "Setup Wizard",
+      "patternPurpose": "This pattern effectively prompts users to take action, which is essential for activation.",
+      "layoutType": "modal_form",
+      "layoutPurpose": "The modal form focuses user attention on the action of logging a habit, making it straightforward.",
+      "modalType": "form",
+      "inputFields": [
+        {
+          "label": "Select a Habit",
+          "type": "select",
+          "required": true,
+          "options": [
+            "Lizard Catching",
+            "Sleep Schedule",
+            "Food Intake",
+            "Playtime"
+          ]
+        },
+        {
+          "label": "Notes",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Add any notes about this habit"
+        }
+      ],
+      "rationale": "This step is critical for user activation, ensuring they engage with the app right away and understand its functionality.",
+      "flowEnd": true,
+      "headline": "Track Your First Habit",
+      "subtitle": "Start logging what your cat loves to do!",
+      "marketingCopy": "It's time to take the plunge and log your cat's first habit! Whether it’s their lizard catching adventures or cozy nap times, every habit is important. Start tracking today to gain insights that will help you enrich your cat’s life!",
+      "cta": "Log Habit",
+      "ctaType": "submit",
+      "featureCallouts": {
+        "features": [
+          {
+            "title": "Habit logging",
+            "description": "Easily track your cat's daily habits to ensure they're healthy and happy."
+          },
+          {
+            "title": "Habit pattern analysis",
+            "description": "Discover trends in your cat's behavior to better understand their needs and preferences."
+          },
+          {
+            "title": "Lizard catching frequency tracking",
+            "description": "Monitor your feline's hunting instincts and keep tabs on their playful escapades."
+          },
+          {
+            "title": "Sleep schedule monitoring",
+            "description": "Keep an eye on your cat's sleep patterns to ensure they're getting the rest they need."
+          },
+          {
+            "title": "Customizable habit alerts",
+            "description": "Set personalized reminders to help you stay on top of your cat's routines effortlessly."
+          }
+        ]
+      },
+      "id": "step-4"
+    }
+  ],
+  "featureCallouts": {
+    "features": [
+      {
+        "title": "Habit logging",
+        "description": "Easily track your cat's daily habits to ensure they're healthy and happy."
+      },
+      {
+        "title": "Habit pattern analysis",
+        "description": "Discover trends in your cat's behavior to better understand their needs and preferences."
+      },
+      {
+        "title": "Lizard catching frequency tracking",
+        "description": "Monitor your feline's hunting instincts and keep tabs on their playful escapades."
+      },
+      {
+        "title": "Sleep schedule monitoring",
+        "description": "Keep an eye on your cat's sleep patterns to ensure they're getting the rest they need."
+      },
+      {
+        "title": "Customizable habit alerts",
+        "description": "Set personalized reminders to help you stay on top of your cat's routines effortlessly."
+      }
+    ]
+  },
+  "integrationOverview": {
+    "narrative": "In the world of CatHabitTracker, onboarding is not just a step; it's the gateway to a fulfilling experience for cat owners eager to understand their feline companions. The onboarding process will unfold through a structured Setup Wizard, ensuring users feel supported and guided as they navigate the initial setup. This wizard-style flow allows for a seamless experience, where users are gently prompted to input essential information about their cats and learn how to log habits effectively. By employing an intuitive interface with guided input fields, we reduce friction, making the onboarding process feel effortless and engaging.\n\nPositioned immediately after signup, this onboarding approach capitalizes on the launch context by encouraging users to dive right into habit tracking from their very first session. As they complete the Setup Wizard, users will not only set up their cat’s profile but will also receive immediate insights into their cat's habits, reinforcing the value of the app. This timely activation is crucial; it transforms a simple app into an indispensable tool for understanding their pet's daily behaviors. By integrating education, feature setup, and immediate activation into a cohesive onboarding experience, we ensure that CatHabitTracker resonates with its audience, empowering cat owners to take charge of their pets' habits right from the start.",
+    "implementationNotes": "Ensure proper user guidance and feedback throughout the flow."
+  },
+  "copy": {
+    "tone": "Empathetic and encouraging",
+    "voice": "Clear, concise, and action-oriented",
+    "keyPhrases": [
+      "Track your cat's habits effortlessly",
+      "Unlock insights into your cat's behavior",
+      "Start monitoring today for a happier cat",
+      "Set up your cat's profile in just a few taps",
+      "Stay informed with customizable alerts"
+    ]
+  },
+  "generatedAt": "2025-07-08T19:33:48.762Z"
+}
