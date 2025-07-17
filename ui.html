@@ -60,6 +60,14 @@
         const reader = new FileReader();
         reader.onload = (event) => {
           const jsonContent = event.target.result;
+          console.log('DEBUG: JSON file loaded, content length:', jsonContent.length);
+          const parsedData = JSON.parse(jsonContent);
+          console.log('DEBUG: Parsed JSON has steps:', parsedData.steps ? parsedData.steps.length : 'no steps property');
+          if (parsedData.steps) {
+            parsedData.steps.forEach((step, index) => {
+              console.log(`DEBUG: Raw step ${index + 1}: ${step.stepName} (${step.layoutType})`);
+            });
+          }
           // Send the JSON content to the plugin's main code
           parent.postMessage({ pluginMessage: { type: 'generate-screens', json: jsonContent } }, '*');
         };

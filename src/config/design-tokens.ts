@@ -44,7 +44,7 @@ export const DESIGN_TOKENS = {
 
   // Layout dimensions
   dimensions: {
-    desktop: { width: 1440, height: 1024 },
+    desktop: { width: 1400, height: 900 },
     mobile: { width: 375, height: 812 },
     modal: { width: 600, height: 400 },
     tooltip: { width: 320, height: 240 },
@@ -107,6 +107,6 @@ export const LIBRARY_KEYS = {
 export const PLUGIN_CONFIG = {
   frameSpacing: 80,
   annotationSpacing: 24,
-  maxFrameWidth: 1440,
+  maxFrameWidth: 1400,
   defaultTimeout: 5000
 };

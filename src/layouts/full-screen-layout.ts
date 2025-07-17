@@ -14,6 +14,8 @@ export class FullScreenLayoutCreator implements LayoutCreator {
     frame.name = step.stepName || 'Full Screen Layout';
     frame.resize(DESIGN_TOKENS.dimensions.desktop.width, DESIGN_TOKENS.dimensions.desktop.height);
     frame.layoutMode = 'VERTICAL';
+    frame.primaryAxisSizingMode = 'FIXED';
+    frame.counterAxisSizingMode = 'FIXED';
     frame.primaryAxisAlignItems = 'CENTER';
     frame.counterAxisAlignItems = 'CENTER';
     frame.itemSpacing = DESIGN_TOKENS.spacing.lg;

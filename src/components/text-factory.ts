@@ -60,51 +60,51 @@ export class TextFactory {
   }
 
   static async createHeadline(content: string, options: Partial<TextOptions> = {}): Promise<TextNode> {
-    return this.createText({
+    const defaultOptions = {
       content,
       fontSize: DESIGN_TOKENS.fontSizes.headline,
       fontName: DESIGN_TOKENS.fonts.bold,
-      textAlign: 'CENTER',
-      ...options
-    });
+      textAlign: 'CENTER' as const
+    };
+    return this.createText(Object.assign(defaultOptions, options));
   }
 
   static async createTitle(content: string, options: Partial<TextOptions> = {}): Promise<TextNode> {
-    return this.createText({
+    const defaultOptions = {
       content,
       fontSize: DESIGN_TOKENS.fontSizes.title,
-      fontName: DESIGN_TOKENS.fonts.bold,
-      ...options
-    });
+      fontName: DESIGN_TOKENS.fonts.bold
+    };
+    return this.createText(Object.assign(defaultOptions, options));
   }
 
   static async createSubtitle(content: string, options: Partial<TextOptions> = {}): Promise<TextNode> {
-    return this.createText({
+    const defaultOptions = {
       content,
       fontSize: DESIGN_TOKENS.fontSizes.subtitle,
       fontName: DESIGN_TOKENS.fonts.primary,
-      textAlign: 'CENTER',
-      ...options
-    });
+      textAlign: 'CENTER' as const
+    };
+    return this.createText(Object.assign(defaultOptions, options));
   }
 
   static async createBody(content: string, options: Partial<TextOptions> = {}): Promise<TextNode> {
-    return this.createText({
+    const defaultOptions = {
       content,
       fontSize: DESIGN_TOKENS.fontSizes.body,
-      fontName: DESIGN_TOKENS.fonts.primary,
-      ...options
-    });
+      fontName: DESIGN_TOKENS.fonts.primary
+    };
+    return this.createText(Object.assign(defaultOptions, options));
   }
 
   static async createCaption(content: string, options: Partial<TextOptions> = {}): Promise<TextNode> {
-    return this.createText({
+    const defaultOptions = {
       content,
       fontSize: DESIGN_TOKENS.fontSizes.caption,
       fontName: DESIGN_TOKENS.fonts.primary,
-      color: DESIGN_TOKENS.colors.secondary,
-      ...options
-    });
+      color: DESIGN_TOKENS.colors.secondary
+    };
+    return this.createText(Object.assign(defaultOptions, options));
   }
 
   static async createAnnotationText(label: string, content: string): Promise<FrameNode> {

@@ -1,0 +1,186 @@
+{
+  "productInfo": {
+    "productName": "Test All Layouts",
+    "targetAudience": "Testing different layout types",
+    "productType": "mobile app",
+    "coreUserGoal": "Test all layout patterns",
+    "onboardingGoal": {
+      "education": "Test each layout type",
+      "featureSetup": "Test functionality",
+      "activation": "Test all patterns"
+    },
+    "keyFeatures": [
+      "Layout testing",
+      "Pattern verification"
+    ],
+    "launchContext": {
+      "timing": "after signup",
+      "signupStrategy": "early",
+      "frictionReduction": "Test all patterns",
+      "valueReinforcement": "Verify each layout works"
+    },
+    "flowType": "wizard"
+  },
+  "pattern": {
+    "pattern": "Testing Pattern",
+    "rationale": "Testing all available layout types",
+    "citation": "Test"
+  },
+  "steps": [
+    {
+      "stepName": "Full Screen Layout Test",
+      "uxGoal": "Test full screen layout",
+      "userAction": "View full screen",
+      "uxPattern": "Test",
+      "patternPurpose": "Test full screen layout",
+      "layoutType": "full_screen",
+      "layoutPurpose": "Test full screen functionality",
+      "inputFields": [],
+      "rationale": "Test full screen layout",
+      "flowEnd": false,
+      "headline": "Full Screen Layout Test",
+      "subtitle": "Testing the full screen layout pattern",
+      "marketingCopy": "This is a test of the full screen layout pattern with centered content.",
+      "cta": "Continue",
+      "ctaType": "next page",
+      "id": "step-1"
+    },
+    {
+      "stepName": "Modal Layout Test",
+      "uxGoal": "Test modal layout",
+      "userAction": "View modal",
+      "uxPattern": "Test",
+      "patternPurpose": "Test modal layout",
+      "layoutType": "modal_layout",
+      "modalType": "welcome",
+      "layoutPurpose": "Test modal functionality",
+      "inputFields": [],
+      "rationale": "Test modal layout",
+      "flowEnd": false,
+      "headline": "Modal Layout Test",
+      "subtitle": "Testing the modal layout pattern",
+      "marketingCopy": "This is a test of the modal layout pattern without form inputs.",
+      "cta": "Continue",
+      "ctaType": "next page",
+      "id": "step-2"
+    },
+    {
+      "stepName": "Modal Layout Form Test",
+      "uxGoal": "Test modal layout with form",
+      "userAction": "Fill out modal form",
+      "uxPattern": "Test",
+      "patternPurpose": "Test modal layout with form",
+      "layoutType": "modal_layout",
+      "modalType": "form",
+      "layoutPurpose": "Test modal with form functionality",
+      "inputFields": [
+        {
+          "type": "text",
+          "label": "Preference",
+          "placeholder": "Enter preference",
+          "required": false
+        },
+        {
+          "type": "email",
+          "label": "Email",
+          "placeholder": "Enter your email",
+          "required": true
+        }
+      ],
+      "rationale": "Test modal layout with form",
+      "flowEnd": false,
+      "headline": "Modal Layout Form Test",
+      "subtitle": "Testing modal with form inputs",
+      "marketingCopy": "This tests the modal layout pattern with form input fields.",
+      "cta": "Submit",
+      "ctaType": "next page",
+      "id": "step-3"
+    },
+    {
+      "stepName": "Tooltip Layout Test",
+      "uxGoal": "Test tooltip layout",
+      "userAction": "View tooltip overlay",
+      "uxPattern": "Test",
+      "patternPurpose": "Test tooltip layout",
+      "layoutType": "tooltip_overlay",
+      "layoutPurpose": "Test tooltip functionality",
+      "inputFields": [],
+      "rationale": "Test tooltip layout",
+      "flowEnd": false,
+      "headline": "Tooltip Layout Test",
+      "subtitle": "Testing the tooltip overlay pattern",
+      "marketingCopy": "This is a test of the tooltip overlay layout pattern.",
+      "cta": "Continue",
+      "ctaType": "next page",
+      "id": "step-4"
+    },
+    {
+      "stepName": "Split Screen Layout Test",
+      "uxGoal": "Test split screen layout",
+      "userAction": "View split screen",
+      "uxPattern": "Test",
+      "patternPurpose": "Test split screen layout",
+      "layoutType": "split_screen",
+      "layoutPurpose": "Test split screen functionality",
+      "inputFields": [],
+      "rationale": "Test split screen layout",
+      "flowEnd": false,
+      "headline": "Split Screen Layout Test",
+      "subtitle": "Testing the split screen layout pattern",
+      "marketingCopy": "This is a test of the split screen layout pattern with information content only.",
+      "cta": "Continue",
+      "ctaType": "next page",
+      "id": "step-5"
+    },
+    {
+      "stepName": "Split Screen Layout Form Test",
+      "uxGoal": "Test split screen with form",
+      "userAction": "Fill out split screen form",
+      "uxPattern": "Test",
+      "patternPurpose": "Test split screen with form",
+      "layoutType": "split_screen",
+      "layoutPurpose": "Test split screen with input fields",
+      "inputFields": [
+        {
+          "type": "text",
+          "label": "Name",
+          "placeholder": "Enter your name",
+          "required": true
+        },
+        {
+          "type": "email",
+          "label": "Email",
+          "placeholder": "Enter your email",
+          "required": true
+        },
+        {
+          "type": "select",
+          "label": "Category",
+          "placeholder": "Choose a category",
+          "required": false
+        }
+      ],
+      "rationale": "Test split screen with form fields",
+      "flowEnd": true,
+      "headline": "Split Screen Layout Form Test",
+      "subtitle": "Testing split screen with form inputs",
+      "marketingCopy": "This tests the split screen layout with form input fields.",
+      "cta": "Finish",
+      "ctaType": "submit",
+      "id": "step-6"
+    }
+  ],
+  "integrationOverview": {
+    "narrative": "Testing all layout types to ensure proper functionality.",
+    "implementationNotes": "Test each layout pattern thoroughly."
+  },
+  "copy": {
+    "tone": "Testing",
+    "voice": "Clear and direct",
+    "keyPhrases": [
+      "Test layout patterns",
+      "Verify functionality"
+    ]
+  },
+  "generatedAt": "2025-07-16T15:45:00.000Z"
+}

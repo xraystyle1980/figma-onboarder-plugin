@@ -14,20 +14,22 @@ export class TooltipLayoutCreator implements LayoutCreator {
     background.name = `${step.stepName} - Tooltip Context`;
     background.resize(DESIGN_TOKENS.dimensions.desktop.width, DESIGN_TOKENS.dimensions.desktop.height);
     background.fills = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.background }];
-    background.layoutMode = 'VERTICAL';
-    background.primaryAxisAlignItems = 'CENTER';
-    background.counterAxisAlignItems = 'CENTER';
+    background.layoutMode = 'NONE'; // No auto-layout for absolute positioning
+    background.primaryAxisSizingMode = 'FIXED';
+    background.counterAxisSizingMode = 'FIXED';
 
-    // App mockup (simplified)
+    // App mockup (simplified) - centered
     const appMockup = await this.createAppMockup();
+    appMockup.x = (DESIGN_TOKENS.dimensions.desktop.width - 800) / 2; // Center horizontally
+    appMockup.y = (DESIGN_TOKENS.dimensions.desktop.height - 600) / 2; // Center vertically
     background.appendChild(appMockup);
 
-    // Tooltip overlay
+    // Tooltip overlay - positioned on top
     const tooltip = await this.createTooltip(step);
     
     // Position tooltip relative to mockup
-    tooltip.x = 200; // Offset from left
-    tooltip.y = 150; // Offset from top
+    tooltip.x = appMockup.x + 200; // Offset from mockup left
+    tooltip.y = appMockup.y + 150; // Offset from mockup top
 
     background.appendChild(tooltip);
 
@@ -66,15 +68,6 @@ export class TooltipLayoutCreator implements LayoutCreator {
     content.fills = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.background }];
     mockup.appendChild(content);
 
-    // Highlight area (where tooltip points to)
-    const highlight = figma.createFrame();
-    highlight.name = 'Highlighted Feature';
-    highlight.resize(120, 40);
-    highlight.cornerRadius = DESIGN_TOKENS.borderRadius.md;
-    highlight.fills = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.accent }];
-    highlight.x = 50;
-    highlight.y = 20;
-    content.appendChild(highlight);
 
     return mockup;
   }
@@ -84,8 +77,15 @@ export class TooltipLayoutCreator implements LayoutCreator {
     tooltip.name = 'Tooltip';
     tooltip.resize(DESIGN_TOKENS.dimensions.tooltip.width, 0); // Auto height
     tooltip.layoutMode = 'VERTICAL';
+    tooltip.layoutAlign = 'STRETCH'; // Fill available width
+    tooltip.primaryAxisAlignItems = 'MIN'; // Align to top
+    tooltip.counterAxisAlignItems = 'CENTER'; // Center content horizontally
     tooltip.primaryAxisSizingMode = 'AUTO';
-    tooltip.counterAxisSizingMode = 'FIXED';
+    tooltip.counterAxisSizingMode = 'AUTO';
+    // Uncomment these lines if you want fixed dimensions
+    // tooltip.primaryAxisSizingMode = 'FIXED';
+    // tooltip.counterAxisSizingMode = 'FIXED';
+    // tooltip.resize(800, 400); // Fixed width of 800px
     tooltip.itemSpacing = DESIGN_TOKENS.spacing.md;
     tooltip.paddingTop = DESIGN_TOKENS.spacing.lg;
     tooltip.paddingBottom = DESIGN_TOKENS.spacing.lg;
@@ -95,12 +95,6 @@ export class TooltipLayoutCreator implements LayoutCreator {
     tooltip.fills = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.white }];
     tooltip.effects = [DESIGN_TOKENS.shadows.lg];
 
-    // Close button
-    const closeButton = await this.createCloseButton();
-    closeButton.layoutAlign = 'STRETCH';
-    closeButton.x = DESIGN_TOKENS.dimensions.tooltip.width - 32;
-    closeButton.y = 8;
-    tooltip.appendChild(closeButton);
 
     // Content
     if (step.headline) {
@@ -124,33 +118,9 @@ export class TooltipLayoutCreator implements LayoutCreator {
     const footer = await this.createTooltipFooter(step);
     tooltip.appendChild(footer);
 
-    // Tooltip pointer/arrow
-    const arrow = await this.createTooltipArrow();
-    arrow.x = 40; // Position relative to tooltip
-    arrow.y = -8; // Above tooltip
-    tooltip.appendChild(arrow);
-
     return tooltip;
   }
 
-  private async createCloseButton(): Promise<FrameNode> {
-    const closeButton = figma.createFrame();
-    closeButton.name = 'Close Button';
-    closeButton.resize(24, 24);
-    closeButton.cornerRadius = DESIGN_TOKENS.borderRadius.round;
-    closeButton.fills = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.border }];
-    closeButton.layoutMode = 'VERTICAL';
-    closeButton.primaryAxisAlignItems = 'CENTER';
-    closeButton.counterAxisAlignItems = 'CENTER';
-
-    // X icon placeholder
-    const xIcon = figma.createEllipse();
-    xIcon.resize(8, 8);
-    xIcon.fills = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.secondary }];
-
-    closeButton.appendChild(xIcon);
-    return closeButton;
-  }
 
   private async createTooltipFooter(step: OnboardingStep): Promise<FrameNode> {
     const footer = figma.createFrame();
@@ -158,9 +128,12 @@ export class TooltipLayoutCreator implements LayoutCreator {
     footer.layoutMode = 'HORIZONTAL';
     footer.primaryAxisSizingMode = 'FIXED';
     footer.counterAxisSizingMode = 'AUTO';
-    footer.resize(DESIGN_TOKENS.dimensions.tooltip.width - (DESIGN_TOKENS.spacing.lg * 2), 0);
+    footer.resize(400, 50); // Fixed width of 400px
     footer.primaryAxisAlignItems = 'CENTER';
-    footer.counterAxisAlignItems = 'SPACE_BETWEEN';
+    footer.counterAxisAlignItems = 'CENTER';
+    footer.paddingTop = DESIGN_TOKENS.spacing.lg; // Add top padding
+    footer.paddingBottom = DESIGN_TOKENS.spacing.md; // Add bottom padding
+    footer.itemSpacing = 40; // 40px gap between progress and button
     footer.fills = [];
 
     // Progress indicator
@@ -180,18 +153,4 @@ export class TooltipLayoutCreator implements LayoutCreator {
     return footer;
   }
 
-  private async createTooltipArrow(): Promise<FrameNode> {
-    const arrow = figma.createFrame();
-    arrow.name = 'Tooltip Arrow';
-    arrow.resize(16, 8);
-    arrow.fills = [];
-
-    // Create triangle using vector
-    const triangle = figma.createVector();
-    triangle.resize(16, 8);
-    triangle.fills = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.white }];
-
-    arrow.appendChild(triangle);
-    return arrow;
-  }
 }

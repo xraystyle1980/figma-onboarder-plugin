@@ -11,7 +11,7 @@ export class FormFactory {
     container.layoutMode = 'VERTICAL';
     container.primaryAxisSizingMode = 'AUTO';
     container.counterAxisSizingMode = 'FIXED';
-    container.resize(300, 0); // Fixed width, auto height
+    container.resize(300, 80); // Fixed width, sufficient height for input field
     container.itemSpacing = DESIGN_TOKENS.spacing.xs;
     container.fills = [];
 
@@ -63,6 +63,8 @@ export class FormFactory {
     input.name = 'Text Input';
     input.layoutMode = 'HORIZONTAL';
     input.primaryAxisAlignItems = 'CENTER';
+    input.counterAxisAlignItems = 'CENTER';
+    input.primaryAxisSizingMode = 'FIXED';
     input.counterAxisSizingMode = 'FIXED';
     input.resize(300, DESIGN_TOKENS.dimensions.input.height);
     input.paddingLeft = DESIGN_TOKENS.spacing.md;
@@ -75,9 +77,11 @@ export class FormFactory {
     const placeholder = await TextFactory.createText({
       content: field.placeholder || `Enter ${field.label.toLowerCase()}`,
       fontSize: DESIGN_TOKENS.fontSizes.body,
-      color: DESIGN_TOKENS.colors.secondary
+      color: DESIGN_TOKENS.colors.secondary,
+      textAlign: 'LEFT'
     });
 
+    placeholder.layoutGrow = 1; // Fill container width
     input.appendChild(placeholder);
     return input;
   }
@@ -86,7 +90,9 @@ export class FormFactory {
     const select = figma.createFrame();
     select.name = 'Select Input';
     select.layoutMode = 'HORIZONTAL';
-    select.primaryAxisAlignItems = 'CENTER';
+    select.primaryAxisAlignItems = 'SPACE_BETWEEN'; // Space between text and arrow
+    select.counterAxisAlignItems = 'CENTER';
+    select.primaryAxisSizingMode = 'FIXED';
     select.counterAxisSizingMode = 'FIXED';
     select.resize(300, DESIGN_TOKENS.dimensions.input.height);
     select.paddingLeft = DESIGN_TOKENS.spacing.md;
@@ -95,17 +101,24 @@ export class FormFactory {
     select.fills = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.white }];
     select.strokes = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.border }];
     select.strokeWeight = 1;
+    select.primaryAxisAlignItems = 'SPACE_BETWEEN'; // Space between text and arrow
+    select.counterAxisAlignItems = 'CENTER';
 
     const placeholder = await TextFactory.createText({
       content: field.placeholder || `Select ${field.label.toLowerCase()}`,
       fontSize: DESIGN_TOKENS.fontSizes.body,
-      color: DESIGN_TOKENS.colors.secondary
+      color: DESIGN_TOKENS.colors.secondary,
+      textAlign: 'LEFT'
     });
 
+    placeholder.layoutGrow = 1; // Fill container width
+
     // Add dropdown arrow
-    const arrow = figma.createVector();
+    const arrow = figma.createPolygon();
     arrow.name = 'Dropdown Arrow';
+    arrow.pointCount = 3; // Triangle
     arrow.resize(12, 8);
+    arrow.rotation = 180; // Point down
     arrow.fills = [{ type: 'SOLID', color: DESIGN_TOKENS.colors.secondary }];
 
     select.appendChild(placeholder);
@@ -204,7 +217,9 @@ export class FormFactory {
     const placeholder = await TextFactory.createText({
       content: field.placeholder || `Enter ${field.label.toLowerCase()}`,
       fontSize: DESIGN_TOKENS.fontSizes.body,
-      color: DESIGN_TOKENS.colors.secondary
+      color: DESIGN_TOKENS.colors.secondary,
+      textAlign: 'LEFT',
+      maxWidth: 244
     });
 
     textarea.appendChild(placeholder);
@@ -215,10 +230,11 @@ export class FormFactory {
     const form = figma.createFrame();
     form.name = title || 'Form';
     form.layoutMode = 'VERTICAL';
-    form.primaryAxisSizingMode = 'AUTO';
+    form.primaryAxisSizingMode = 'FIXED';
     form.counterAxisSizingMode = 'AUTO';
     form.itemSpacing = DESIGN_TOKENS.spacing.lg;
     form.fills = [];
+    form.resize(400, fields.length * 100); // Fixed width of 400px
 
     if (title) {
       const formTitle = await TextFactory.createTitle(title);

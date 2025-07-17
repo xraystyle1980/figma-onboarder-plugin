@@ -26,12 +26,11 @@ export class ButtonFactory {
     button.layoutMode = 'HORIZONTAL';
     button.primaryAxisAlignItems = 'CENTER';
     button.counterAxisAlignItems = 'CENTER';
-    button.primaryAxisSizingMode = width ? 'FIXED' : 'AUTO';
-    button.counterAxisSizingMode = 'FIXED';
+    button.primaryAxisSizingMode = 'AUTO';
+    button.counterAxisSizingMode = 'AUTO';
 
     // Set size-based properties
     const sizeConfig = this.getSizeConfig(size);
-    button.resize(width || sizeConfig.minWidth, sizeConfig.height);
     button.paddingLeft = sizeConfig.paddingX;
     button.paddingRight = sizeConfig.paddingX;
     button.paddingTop = sizeConfig.paddingY;
@@ -133,14 +132,17 @@ export class ButtonFactory {
   }
 
   static async createPrimaryButton(text: string, options: Partial<ButtonOptions> = {}): Promise<FrameNode> {
-    return this.createButton({ text, variant: 'primary', ...options });
+    const buttonOptions = Object.assign({ text, variant: 'primary' as const }, options);
+    return this.createButton(buttonOptions);
   }
 
   static async createSecondaryButton(text: string, options: Partial<ButtonOptions> = {}): Promise<FrameNode> {
-    return this.createButton({ text, variant: 'secondary', ...options });
+    const buttonOptions = Object.assign({ text, variant: 'secondary' as const }, options);
+    return this.createButton(buttonOptions);
   }
 
   static async createGhostButton(text: string, options: Partial<ButtonOptions> = {}): Promise<FrameNode> {
-    return this.createButton({ text, variant: 'ghost', ...options });
+    const buttonOptions = Object.assign({ text, variant: 'ghost' as const }, options);
+    return this.createButton(buttonOptions);
   }
 }

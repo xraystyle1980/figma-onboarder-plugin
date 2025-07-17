@@ -9,10 +9,13 @@ export class AnnotationFactory {
     const container = figma.createFrame();
     container.name = 'Annotations';
     container.layoutMode = 'VERTICAL';
-    container.layoutAlign = 'STRETCH';
+    // container.resize(400, 600); // Fixed width and height
+    container.layoutAlign = 'STRETCH'; // Fill available width
+    container.primaryAxisAlignItems = 'MIN'; // Align to top
+    // container.counterAxisAlignItems = 'CENTER'; // Center content horizontally
     container.primaryAxisSizingMode = 'AUTO';
-    container.counterAxisSizingMode = 'FIXED';
-    container.resize(400, 0); // Fixed width, auto height
+    container.counterAxisSizingMode = 'AUTO';
+
     container.fills = [];
     container.paddingLeft = DESIGN_TOKENS.spacing.lg;
     container.paddingRight = DESIGN_TOKENS.spacing.lg;

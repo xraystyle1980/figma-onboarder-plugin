@@ -37,6 +37,11 @@ async function handleGenerateScreens(jsonData?: string): Promise<void> {
 
     const flow = validationResult.flow!;
     console.log('Successfully validated flow with', flow.steps.length, 'steps');
+    
+    // DEBUG: Log each step
+    flow.steps.forEach((step, index) => {
+      console.log(`Step ${index + 1}: ${step.stepName} (${step.layoutType}) flowEnd: ${step.flowEnd || false}`);
+    });
 
     // Step 2: Pre-load fonts and pages
     await Promise.all([
@@ -62,14 +67,17 @@ async function generateFrames(flow: OnboardingFlow): Promise<SceneNode[]> {
   const createdFrames: SceneNode[] = [];
   const totalSteps = flow.steps.length;
 
+  console.log(`DEBUG: Starting generateFrames with ${totalSteps} steps`);
+
   for (let i = 0; i < flow.steps.length; i++) {
     const step = flow.steps[i];
     
     try {
-      console.log(`Generating step ${i + 1}/${totalSteps}: ${step.stepName} (${step.layoutType})`);
+      console.log(`DEBUG: Processing step ${i + 1}/${totalSteps}: ${step.stepName} (${step.layoutType}) flowEnd: ${step.flowEnd || false}`);
       
       // Create layout
       const layoutFrame = await LayoutFactory.createLayout(step);
+      console.log(`DEBUG: Created layout frame for step ${i + 1}`);
       
       // Create container with annotations
       const containerFrame = await AnnotationFactory.createContainerWithAnnotations(
@@ -78,21 +86,25 @@ async function generateFrames(flow: OnboardingFlow): Promise<SceneNode[]> {
         i, 
         totalSteps
       );
+      console.log(`DEBUG: Created container frame for step ${i + 1}`);
 
       // Add to page
       figma.currentPage.appendChild(containerFrame);
       createdFrames.push(containerFrame);
+      console.log(`DEBUG: Added frame ${i + 1} to page and array`);
 
     } catch (error: any) {
-      console.error(`Error generating step ${i + 1}:`, error);
+      console.error(`ERROR: Failed to generate step ${i + 1}:`, error);
       
       // Create error frame as fallback
       const errorFrame = await createErrorFrame(step, i, error);
       figma.currentPage.appendChild(errorFrame);
       createdFrames.push(errorFrame);
+      console.log(`DEBUG: Added error frame for step ${i + 1}`);
     }
   }
 
+  console.log(`DEBUG: generateFrames completed with ${createdFrames.length} frames`);
   return createdFrames;
 }
 
@@ -136,7 +148,7 @@ async function createErrorFrame(step: any, index: number, error: any): Promise<F
   
   const errorText = figma.createText();
   errorText.fontName = { family: 'Inter', style: 'Regular' };
-  errorText.characters = `Error generating step: ${step?.stepName || 'Unknown'}\n${error?.message || 'Unknown error'}`;
+  errorText.characters = `Error generating step: ${step && step.stepName || 'Unknown'}\n${error && error.message || 'Unknown error'}`;
   errorText.fontSize = 14;
   errorText.fills = [{ type: 'SOLID', color: { r: 0.8, g: 0.2, b: 0.2 } }];
   
