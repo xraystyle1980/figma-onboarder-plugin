@@ -45,6 +45,8 @@ export class FullScreenLayoutCreator implements LayoutCreator {
         textAlign: 'CENTER',
         maxWidth: 600
       });
+      marketingCopy.layoutGrow = 1;
+      marketingCopy.layoutAlign = 'STRETCH';
       frame.appendChild(marketingCopy);
     }
 

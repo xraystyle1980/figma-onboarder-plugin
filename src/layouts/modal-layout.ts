@@ -249,6 +249,8 @@ export class ModalLayoutCreator implements LayoutCreator {
       const summary = await TextFactory.createBody(step.marketingCopy, {
         textAlign: 'CENTER'
       });
+      summary.layoutGrow = 1;
+      summary.layoutAlign = 'STRETCH';
       modal.appendChild(summary);
     }
 

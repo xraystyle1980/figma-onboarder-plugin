@@ -14,6 +14,71 @@
       border-color: #3498db;
       background-color: #f0f8ff;
     }
+    
+    /* Generated Card Styles */
+    #generatedCard {
+      display: none;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    
+    #generatedCard.show {
+      display: block;
+    }
+    
+    #generatedCard h3 {
+      margin: 0 0 1rem 0;
+      color: #333;
+      font-size: 1.2rem;
+    }
+    
+    #generatedCard p {
+      margin: 0.5rem 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: #3498db;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2980b9;
+    }
+    
+    .btn-secondary {
+      background-color: #95a5a6;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #7f8c8d;
+    }
+    
+    .status-text {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #27ae60;
+    }
   </style>
 
   <div id="dropzone">
@@ -23,9 +88,22 @@
     <input type="file" id="file-input" style="display: none;" accept=".json">
   </div>
 
+  <div id="generatedCard">
+    <h3>🎉 Screens Generated Successfully!</h3>
+    <p id="stepCount">0 screens have been generated and added to your Figma canvas.</p>
+    <p style="color: #666; font-size: 0.8rem;">Your onboarding flow screens have been created and positioned on the canvas.</p>
+    
+    <div class="button-group">
+      <button id="generateAgain" class="btn btn-primary">🔄 Generate Again</button>
+    </div>
+  </div>
+
   <script>
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('file-input');
+    const generatedCard = document.getElementById('generatedCard');
+    const stepCount = document.getElementById('stepCount');
+    const generateAgain = document.getElementById('generateAgain');
 
     // Handle file drop
     dropzone.addEventListener('dragover', (e) => {
@@ -55,6 +133,11 @@
       }
     });
 
+    // Handle generate again
+    generateAgain.addEventListener('click', () => {
+      generatedCard.classList.remove('show');
+    });
+
     function handleFile(file) {
       if (file.type === 'application/json') {
         const reader = new FileReader();
@@ -68,6 +151,7 @@
               console.log(`DEBUG: Raw step ${index + 1}: ${step.stepName} (${step.layoutType})`);
             });
           }
+          
           // Send the JSON content to the plugin's main code
           parent.postMessage({ pluginMessage: { type: 'generate-screens', json: jsonContent } }, '*');
         };
@@ -76,6 +160,17 @@
         alert('Please drop a valid .json file.');
       }
     }
+
+    // Listen for messages from the plugin
+    window.addEventListener('message', (event) => {
+      const { type, data } = event.data.pluginMessage || {};
+      
+      if (type === 'generation-complete') {
+        // Show the generated card with step count
+        stepCount.textContent = `${data.stepCount} screens have been generated and added to your Figma canvas.`;
+        generatedCard.classList.add('show');
+      }
+    });
   </script>
 </body>
 </html> 

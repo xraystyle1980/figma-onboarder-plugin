@@ -133,9 +133,16 @@ function finalizeGeneration(frames: SceneNode[]): void {
   const successMessage = `Successfully generated ${frames.length} screen${frames.length !== 1 ? 's' : ''}`;
   figma.notify(successMessage);
   
-  // Close plugin
+  // Notify UI about completion
+  figma.ui.postMessage({
+    type: 'generation-complete',
+    data: { stepCount: frames.length }
+  });
+  
+  // Close plugin after successful generation
   figma.closePlugin();
 }
+
 
 async function createErrorFrame(step: any, index: number, error: any): Promise<FrameNode> {
   const errorFrame = figma.createFrame();

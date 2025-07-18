@@ -140,6 +140,8 @@ export class SplitScreenLayoutCreator implements LayoutCreator {
         textAlign: 'LEFT',
         maxWidth: 400
       });
+      marketingCopy.layoutGrow = 1;
+      marketingCopy.layoutAlign = 'STRETCH';
       contentContainer.appendChild(marketingCopy);
     }
 

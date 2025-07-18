@@ -13,13 +13,18 @@ export class JsonValidator {
 
     // Handle different JSON structures
     let steps: any[];
+    let flowMetadata: any = {};
     
     try {
       if (Array.isArray(data) && data.length > 0 && data[0].steps) {
         steps = data[0].steps;
+        flowMetadata = { ...data[0] };
+        delete flowMetadata.steps;
         console.log('DEBUG: Using steps from data[0].steps, length:', steps.length);
       } else if (data.steps) {
         steps = data.steps;
+        flowMetadata = { ...data };
+        delete flowMetadata.steps;
         console.log('DEBUG: Using steps from data.steps, length:', steps.length);
       } else if (Array.isArray(data)) {
         steps = data;
@@ -52,26 +57,34 @@ export class JsonValidator {
         if (stepErrors.length > 0) {
           console.log(`DEBUG: Step ${i + 1} has errors:`, stepErrors);
           errors.push(...stepErrors);
-        } else {
-          console.log(`DEBUG: Step ${i + 1} is valid, normalizing`);
+        }
+        
+        // Always normalize valid steps, even if there are errors in other steps
+        if (step.stepName && step.layoutType) {
+          console.log(`DEBUG: Step ${i + 1} is normalizable, adding to valid steps`);
           validatedSteps.push(this.normalizeStep(step));
         }
       }
       
       console.log('DEBUG: Validation complete. Valid steps:', validatedSteps.length, 'Total errors:', errors.length);
 
-      // In development mode, allow flow to proceed even with validation errors
-      // but only if we have valid steps
+      // Enhanced validation result
       const isValid = errors.length === 0;
       const hasValidSteps = validatedSteps.length > 0;
       
       if (this.DEVELOPMENT_MODE && !isValid && hasValidSteps) {
         console.warn('Validation errors in development mode (proceeding anyway):', errors);
-        const flow: OnboardingFlow = { steps: validatedSteps };
+        const flow: OnboardingFlow = { 
+          steps: validatedSteps,
+          ...flowMetadata
+        };
         return { isValid: true, errors, flow }; // Override isValid to true
       }
       
-      const flow: OnboardingFlow = { steps: validatedSteps };
+      const flow: OnboardingFlow = { 
+        steps: validatedSteps,
+        ...flowMetadata
+      };
       return { isValid, errors, flow: isValid ? flow : undefined };
 
     } catch (error) {
@@ -101,6 +114,10 @@ export class JsonValidator {
         errors.push(`${stepPrefix}: modalType "${step.modalType}" is not valid. Must be one of: welcome, form, confirmation, summary`);
       }
     }
+
+    // Validate content requirements for each layout type
+    const contentErrors = this.validateContentRequirements(step, stepPrefix);
+    errors.push(...contentErrors);
 
     // Validate input fields if present
     if (step.inputFields && Array.isArray(step.inputFields)) {
@@ -157,6 +174,37 @@ export class JsonValidator {
     return ['text', 'email', 'number', 'select', 'multiselect', 'checkbox', 'radio', 'textarea', 'date'].includes(type);
   }
 
+  private static validateContentRequirements(step: any, stepPrefix: string): string[] {
+    const errors: string[] = [];
+    
+    // Layout-specific content requirements
+    switch (step.layoutType) {
+      case 'full_screen':
+        if (!step.headline && !step.subtitle) {
+          errors.push(`${stepPrefix}: Full screen layout requires at least a headline or subtitle`);
+        }
+        break;
+      case 'modal_form':
+      case 'modal_layout':
+        if (!step.headline && !step.subtitle) {
+          errors.push(`${stepPrefix}: Modal layout requires at least a headline or subtitle`);
+        }
+        break;
+      case 'split_screen':
+        if (!step.headline && !step.subtitle && !step.marketingCopy) {
+          errors.push(`${stepPrefix}: Split screen layout requires at least headline, subtitle, or marketing copy`);
+        }
+        break;
+      case 'tooltip_overlay':
+        if (!step.headline && !step.subtitle) {
+          errors.push(`${stepPrefix}: Tooltip layout requires at least a headline or subtitle`);
+        }
+        break;
+    }
+
+    return errors;
+  }
+
   private static normalizeStep(step: any): OnboardingStep {
     // Clean up input fields - handle both string and object formats
     let cleanInputFields = step.inputFields;
@@ -184,7 +232,7 @@ export class JsonValidator {
     }
 
     return {
-      stepName: step.stepName,
+      stepName: step.stepName || `Step ${Date.now()}`,
       uxGoal: step.uxGoal,
       userAction: step.userAction,
       rationale: step.rationale,
@@ -196,7 +244,7 @@ export class JsonValidator {
       ctaType: step.ctaType,
       modalType: step.modalType,
       inputFields: cleanInputFields,
-      flowEnd: step.flowEnd
+      flowEnd: step.flowEnd || false
     };
   }
 }
